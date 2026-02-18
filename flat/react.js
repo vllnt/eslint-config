@@ -1,6 +1,5 @@
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import turboPlugin from 'eslint-plugin-turbo'
 import { goodPractices, goodPracticesTsx, goodPracticesTest } from './core/good-practices.js'
 import { imports } from './core/imports.js'
 import { format } from './core/format.js'
@@ -19,14 +18,6 @@ export const react = tseslint.config(
       },
     },
   },
-  {
-    plugins: {
-      turbo: turboPlugin,
-    },
-    rules: {
-      ...turboPlugin.configs.recommended.rules,
-    },
-  },
   goodPractices,
   goodPracticesTsx,
   goodPracticesTest,
@@ -43,4 +34,3 @@ export const react = tseslint.config(
 )
 
 export default react
-

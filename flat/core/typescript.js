@@ -1,6 +1,5 @@
 export const typescriptConfig = {
   rules: {
-    // Opinionated: no enums
     'no-restricted-syntax': [
       'error',
       {
@@ -20,10 +19,6 @@ export const typescriptConfig = {
           'Use optional properties instead of unions with `undefined` (e.g. `email?: string`).',
       },
     ],
-
-    /**
-     * Naming conventions
-     */
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -65,7 +60,6 @@ export const typescriptConfig = {
         selector: 'enumMember',
         format: ['camelCase', 'UPPER_CASE'],
       },
-      // Allow route-like paths in object properties (e.g. '/tools/[slug]')
       {
         selector: 'objectLiteralProperty',
         format: null,
@@ -75,11 +69,7 @@ export const typescriptConfig = {
         },
       },
     ],
-
-    // Opinionated: prefer "type" over "interface"
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-
-    // TypeScript strict rules
     '@typescript-eslint/prefer-readonly': 'error',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
     '@typescript-eslint/no-explicit-any': 'error',
@@ -90,25 +80,17 @@ export const typescriptConfig = {
     '@typescript-eslint/prefer-optional-chain': 'error',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/consistent-generic-constructors': 'error',
-
-    // Note: you must disable the base rule as it can report incorrect errors
     'require-await': 'off',
     '@typescript-eslint/require-await': 'error',
-
-    // Prefix unused variables with _ when you prefer to keep the unused variable
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       { argsIgnorePattern: '^_', ignoreRestSiblings: true },
     ],
-
-    // We should absolutely avoid using ts-ignore, but it's not always possible.
     '@typescript-eslint/ban-ts-comment': [
       'error',
       { 'ts-ignore': 'allow-with-description' },
     ],
-
-    // Disabled rules (too strict or not useful)
     '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

@@ -16,13 +16,9 @@ export const reactConfig = {
     },
   },
   rules: {
-    // React recommended
     ...reactPlugin.configs.recommended.rules,
     ...reactPlugin.configs['jsx-runtime'].rules,
-
-    // JSX A11y recommended
     ...jsxA11yPlugin.configs.recommended.rules,
-    // Allow labels without htmlFor when using nesting
     'jsx-a11y/label-has-associated-control': [
       'error',
       {
@@ -30,8 +26,6 @@ export const reactConfig = {
         depth: 3,
       },
     ],
-
-    // React strict rules
     'react/display-name': 'error',
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
@@ -76,12 +70,11 @@ export const reactConfig = {
       'error',
       { allowNumber: true },
     ],
-
-    // React Hooks
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'error',
-
-    // CSS Modules
+    ...Object.fromEntries(
+      Object.entries(reactHooksPlugin.configs['recommended-latest'].rules).map(
+        ([rule, config]) => [rule, config === 'warn' ? 'error' : config],
+      ),
+    ),
     'css-modules/no-unused-class': 'off',
   },
 }

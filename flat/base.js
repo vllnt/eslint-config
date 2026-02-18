@@ -1,22 +1,20 @@
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import turboPlugin from 'eslint-plugin-turbo'
 import { goodPractices } from './core/good-practices.js'
 import { imports } from './core/imports.js'
 import { format } from './core/format.js'
 import { unicornConfig } from './core/unicorn.js'
 import { typescriptConfig } from './core/typescript.js'
 
-export const base = [
+export const base = tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
-    plugins: {
-      turbo: turboPlugin,
-    },
-    rules: {
-      ...turboPlugin.configs.recommended.rules,
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+      },
     },
   },
   goodPractices,
@@ -24,5 +22,4 @@ export const base = [
   format,
   unicornConfig,
   typescriptConfig,
-]
-
+)

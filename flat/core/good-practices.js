@@ -11,14 +11,8 @@ export const goodPractices = {
     'prefer-const': 'error',
     'no-async-promise-executor': 'error',
     'no-console': ['error', { allow: ['debug', 'error', 'info', 'warn'] }],
-
-    // Write better concise english comments
     'write-good-comments/write-good-comments': 'error',
-
-    // Limit function arguments count to 3
     'max-params': ['error', 3],
-
-    // Limit function body length to 30 lines
     'max-lines-per-function': [
       'error',
       {
@@ -27,16 +21,8 @@ export const goodPractices = {
         skipComments: true,
       },
     ],
-
-    // Don't re-assign function parameters
     'no-param-reassign': 'error',
-
-    // Avoid deep nesting (if statements, loops, etc.)
     'max-depth': ['error', 3],
-
-    /**
-     * Functional programming rules - encourage immutability
-     */
     'functional/no-loop-statements': 'error',
     'functional/functional-parameters': [
       'error',
@@ -53,7 +39,6 @@ export const goodPractices = {
 export const goodPracticesTsx = {
   files: ['**/*.tsx'],
   rules: {
-    // Allow up to 70 lines for React components (JSX markup adds lines)
     'max-lines-per-function': [
       'error',
       {
@@ -68,7 +53,6 @@ export const goodPracticesTsx = {
 export const goodPracticesTest = {
   files: ['**/*.test.ts', '**/*.spec.ts', '**/*.e2e.ts'],
   rules: {
-    // Disable max-lines-per-function for tests (for `describe` blocks)
     'max-lines-per-function': 'off',
   },
 }

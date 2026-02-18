@@ -8,12 +8,6 @@ export const format = {
   },
   rules: {
     'prettier/prettier': 'error',
-
-    /**
-     * Perfectionist basically sorts everything alphabetically, excepted for:
-     * - ES6 Class properties/methods sorting not enable, too noisy
-     * - Import sorting is handled by `simple-import-sort` plugin
-     */
     'perfectionist/sort-array-includes': ['error', { type: 'natural' }],
     'perfectionist/sort-enums': ['error', { type: 'natural' }],
     'perfectionist/sort-interfaces': ['error', { type: 'natural' }],

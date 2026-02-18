@@ -1,6 +1,5 @@
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import turboPlugin from 'eslint-plugin-turbo'
 import nextPlugin from '@next/eslint-plugin-next'
 import { goodPractices, goodPracticesTsx, goodPracticesTest } from './core/good-practices.js'
 import { imports } from './core/imports.js'
@@ -13,7 +12,6 @@ import {
   typescriptDecorator,
 } from './core/typescript.js'
 import { reactConfig } from './core/react.js'
-import { boundariesConfig } from './core/boundaries.js'
 
 export const nextjs = tseslint.config(
   eslint.configs.recommended,
@@ -28,13 +26,18 @@ export const nextjs = tseslint.config(
   },
   {
     plugins: {
-      turbo: turboPlugin,
       '@next/next': nextPlugin,
     },
     rules: {
-      ...turboPlugin.configs.recommended.rules,
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs['core-web-vitals'].rules,
+      ...Object.fromEntries(
+        Object.entries({
+          ...nextPlugin.configs.recommended.rules,
+          ...nextPlugin.configs['core-web-vitals'].rules,
+        }).map(([rule, config]) => [
+          rule,
+          config === 'warn' ? 'error' : config,
+        ]),
+      ),
     },
   },
   goodPractices,
@@ -50,7 +53,6 @@ export const nextjs = tseslint.config(
   typescriptTest,
   typescriptDecorator,
   reactConfig,
-  boundariesConfig,
   {
     files: ['**/app/**/page.{js,jsx,ts,tsx}', '**/app/**/layout.{js,jsx,ts,tsx}'],
     rules: {
@@ -70,7 +72,7 @@ export const nextjs = tseslint.config(
         },
         {
           selector:
-            'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/^(ArrowFunctionExpression|FunctionExpression)$/]:not([id.name=/^(GET|POST|PUT|DELETE|DELET)$/])',
+            'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/^(ArrowFunctionExpression|FunctionExpression)$/]:not([id.name=/^(GET|POST|PUT|DELETE)$/])',
           message: 'Only GET, POST, PUT, DELETE are allowed as exported route handlers in route.ts',
         },
       ],

@@ -1,9 +1,19 @@
+/**
+ * Convex ESLint config. Can be used standalone or composed with base.
+ *
+ * @example
+ * import { base } from '@bntvllnt/eslint-config'
+ * import { convex } from '@bntvllnt/eslint-config/convex'
+ * export default [...base, ...convex]
+ */
 import convexPlugin from '@convex-dev/eslint-plugin'
+import unicornPlugin from 'eslint-plugin-unicorn'
 
 export const convex = [
   {
     plugins: {
       '@convex-dev': convexPlugin,
+      unicorn: unicornPlugin,
     },
   },
   {
