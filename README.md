@@ -1,6 +1,7 @@
 # @vllnt/eslint-config
 
 [![npm version](https://img.shields.io/npm/v/@vllnt/eslint-config)](https://www.npmjs.com/package/@vllnt/eslint-config)
+[![CI](https://github.com/vllnt/eslint-config/actions/workflows/ci.yml/badge.svg)](https://github.com/vllnt/eslint-config/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces `error` — no warnings.

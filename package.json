@@ -67,6 +67,10 @@
       "optional": true
     }
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "devDependencies": {
     "eslint": "^9.39.2",
     "typescript": "^5.9.3"
