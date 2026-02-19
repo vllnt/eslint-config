@@ -1,6 +1,6 @@
-# @bntvllnt/eslint-config
+# @vllnt/eslint-config
 
-[![npm version](https://img.shields.io/npm/v/@bntvllnt/eslint-config)](https://www.npmjs.com/package/@bntvllnt/eslint-config)
+[![npm version](https://img.shields.io/npm/v/@vllnt/eslint-config)](https://www.npmjs.com/package/@vllnt/eslint-config)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces `error` — no warnings.
@@ -14,20 +14,20 @@ Strict, opinionated ESLint flat config for TypeScript projects. Every rule enfor
 ## Install
 
 ```sh
-pnpm add -D @bntvllnt/eslint-config eslint typescript prettier
+pnpm add -D @vllnt/eslint-config eslint typescript prettier
 ```
 
 ## Configs
 
 | Export | Use case |
 |--------|----------|
-| `@bntvllnt/eslint-config` | Base — eslint + typescript-eslint strict + prettier |
-| `@bntvllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y) |
-| `@bntvllnt/eslint-config/react` | React apps without Next.js |
-| `@bntvllnt/eslint-config/nodejs` | Node.js backends |
-| `@bntvllnt/eslint-config/convex` | Convex backends |
-| `@bntvllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
-| `@bntvllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
+| `@vllnt/eslint-config` | Base — eslint + typescript-eslint strict + prettier |
+| `@vllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y) |
+| `@vllnt/eslint-config/react` | React apps without Next.js |
+| `@vllnt/eslint-config/nodejs` | Node.js backends |
+| `@vllnt/eslint-config/convex` | Convex backends |
+| `@vllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
+| `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
 
 ## Usage
 
@@ -35,7 +35,7 @@ Each preset is an array — spread it into your flat config:
 
 ```js
 // eslint.config.js
-import { nextjs } from '@bntvllnt/eslint-config/nextjs'
+import { nextjs } from '@vllnt/eslint-config/nextjs'
 
 export default [...nextjs]
 ```
@@ -45,9 +45,9 @@ All presets include `projectService: true` by default for type-aware linting.
 ### Composing multiple configs
 
 ```js
-import { nodejs } from '@bntvllnt/eslint-config/nodejs'
-import { turbo } from '@bntvllnt/eslint-config/turbo'
-import { boundaries } from '@bntvllnt/eslint-config/boundaries'
+import { nodejs } from '@vllnt/eslint-config/nodejs'
+import { turbo } from '@vllnt/eslint-config/turbo'
+import { boundaries } from '@vllnt/eslint-config/boundaries'
 
 export default [
   ...nodejs,
@@ -76,8 +76,8 @@ export default [
 Convex config can be used standalone or composed with base for full coverage:
 
 ```js
-import { base } from '@bntvllnt/eslint-config'
-import { convex } from '@bntvllnt/eslint-config/convex'
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
 
 export default [...base, ...convex]
 ```
@@ -87,7 +87,7 @@ export default [...base, ...convex]
 Append an object after the spread to override any rule:
 
 ```js
-import { nodejs } from '@bntvllnt/eslint-config/nodejs'
+import { nodejs } from '@vllnt/eslint-config/nodejs'
 
 export default [
   ...nodejs,

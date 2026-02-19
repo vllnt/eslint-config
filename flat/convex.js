@@ -2,8 +2,8 @@
  * Convex ESLint config. Can be used standalone or composed with base.
  *
  * @example
- * import { base } from '@bntvllnt/eslint-config'
- * import { convex } from '@bntvllnt/eslint-config/convex'
+ * import { base } from '@vllnt/eslint-config'
+ * import { convex } from '@vllnt/eslint-config/convex'
  * export default [...base, ...convex]
  */
 import convexPlugin from '@convex-dev/eslint-plugin'

@@ -1,5 +1,5 @@
 {
-  "name": "@bntvllnt/eslint-config",
+  "name": "@vllnt/eslint-config",
   "version": "0.1.0",
   "type": "module",
   "description": "Strict ESLint config for TypeScript projects. All rules enforce error — no warnings.",
@@ -7,7 +7,7 @@
   "main": "./flat/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bntvllnt/eslint-config"
+    "url": "https://github.com/vllnt/eslint-config"
   },
   "keywords": [
     "eslint",

@@ -101,11 +101,11 @@ describe('config shape: plugin entries register plugin objects', () => {
 })
 
 describe('hygiene: no leaked internal references', () => {
-  it('no @vllnt/ in any shipped file', () => {
+  it('no @bntvllnt/ references in shipped files', () => {
     const files = collectFiles(FLAT_DIR)
     for (const file of files) {
       const content = readFileSync(file, 'utf8')
-      assert.ok(!content.includes('@vllnt/'), `found @vllnt/ in ${file}`)
+      assert.ok(!content.includes('@bntvllnt/'), `found @bntvllnt/ in ${file}`)
     }
   })
 
