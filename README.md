@@ -18,21 +18,7 @@ Strict, opinionated ESLint flat config for TypeScript projects. Every rule enfor
 pnpm add -D @vllnt/eslint-config eslint typescript prettier
 ```
 
-## Configs
-
-| Export | Use case |
-|--------|----------|
-| `@vllnt/eslint-config` | Base — eslint + typescript-eslint strict + prettier |
-| `@vllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y) |
-| `@vllnt/eslint-config/react` | React apps without Next.js |
-| `@vllnt/eslint-config/nodejs` | Node.js backends |
-| `@vllnt/eslint-config/convex` | Convex backends |
-| `@vllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
-| `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
-
-## Usage
-
-Each preset is an array — spread it into your flat config:
+## Quick start
 
 ```js
 // eslint.config.js
@@ -41,51 +27,30 @@ import { nextjs } from '@vllnt/eslint-config/nextjs'
 export default [...nextjs]
 ```
 
-All presets include `projectService: true` by default for type-aware linting.
+Each preset is an array — spread it into your flat config. All presets include `projectService: true` for type-aware linting.
 
-### Composing multiple configs
+## Presets
+
+| Export | Use case |
+|--------|----------|
+| `@vllnt/eslint-config` | Base — eslint + typescript-eslint strict + prettier |
+| `@vllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y) |
+| `@vllnt/eslint-config/react` | React apps without Next.js |
+| `@vllnt/eslint-config/nodejs` | Node.js backends |
+| `@vllnt/eslint-config/convex` | Convex backends (11 rules + 7 custom) |
+| `@vllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
+| `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
+
+## Composing presets
 
 ```js
 import { nodejs } from '@vllnt/eslint-config/nodejs'
 import { turbo } from '@vllnt/eslint-config/turbo'
-import { boundaries } from '@vllnt/eslint-config/boundaries'
 
-export default [
-  ...nodejs,
-  ...turbo,
-  ...boundaries,
-  {
-    settings: {
-      'boundaries/include': ['src/**/*.ts*'],
-      'boundaries/elements': [
-        { type: 'core', pattern: 'src/core/**' },
-        { type: 'utils', pattern: 'src/utils/**' },
-      ],
-    },
-    rules: {
-      'boundaries/element-types': ['error', {
-        default: 'allow',
-        rules: [{ from: 'core', disallow: ['utils'] }],
-      }],
-    },
-  },
-]
+export default [...nodejs, ...turbo]
 ```
 
-### Convex
-
-Convex config can be used standalone or composed with base for full coverage:
-
-```js
-import { base } from '@vllnt/eslint-config'
-import { convex } from '@vllnt/eslint-config/convex'
-
-export default [...base, ...convex]
-```
-
-### Overriding rules
-
-Append an object after the spread to override any rule:
+Override any rule by appending an object:
 
 ```js
 import { nodejs } from '@vllnt/eslint-config/nodejs'
@@ -99,6 +64,120 @@ export default [
   },
 ]
 ```
+
+## Convex preset
+
+The Convex preset enforces backend best practices with **4 official rules** + **7 custom rules** bundled as `eslint-plugin-convex-rules`.
+
+### Setup
+
+Standalone:
+
+```js
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [...convex]
+```
+
+With base (recommended — adds TypeScript strict, prettier, import sorting):
+
+```js
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [...base, ...convex]
+```
+
+### Rules included
+
+**Official `@convex-dev` rules:**
+
+| Rule | What it catches |
+|------|----------------|
+| `@convex-dev/no-old-registered-function-syntax` | Deprecated function syntax |
+| `@convex-dev/require-args-validator` | Missing `args` validator |
+| `@convex-dev/explicit-table-ids` | Implicit table ID types |
+| `@convex-dev/import-wrong-runtime` | Wrong runtime imports (Node in Convex runtime) |
+
+**Custom `convex-rules` (bundled):**
+
+| Rule | What it catches |
+|------|----------------|
+| `convex-rules/standard-filenames` | Factories outside `queries.ts`, `mutations.ts`, `actions.ts`, `internal_mutations.ts` |
+| `convex-rules/namespace-separation` | `query()` in `mutations.ts`, `mutation()` in `queries.ts`, etc. |
+| `convex-rules/snake-case-filenames` | Hyphens in `convex/` filenames (must be `snake_case`) |
+| `convex-rules/no-bare-v-any` | `v.any()` outside `validators.ts` — use named aliases |
+| `convex-rules/require-returns-validator` | Missing `returns` validator in factory config |
+| `convex-rules/no-query-in-loop` | N+1 queries (`ctx.db.query`/`get`/`runQuery` inside loops) |
+| `convex-rules/no-filter-on-query` | `.filter()` on query chains — use `.withIndex()` |
+
+Plus `@typescript-eslint/explicit-module-boundary-types` for explicit return types on Convex functions.
+
+### Auto-applied overrides
+
+The preset automatically relaxes rules where needed:
+
+- **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
+- **Migration files** (`convex/migrations/**`) — exempt from `standard-filenames`, `namespace-separation`, and `no-query-in-loop`
+- **Generated files** (`convex/_generated/**`), **test files** (`*.test.ts`), and **test helpers** (`convex/testing/**`) are excluded entirely
+
+### Project-specific overrides
+
+Add overrides after the preset for project-specific exemptions:
+
+```js
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [
+  ...base,
+  ...convex,
+
+  // Exempt "use node" action files from import-wrong-runtime (known plugin bug)
+  {
+    files: ['convex/agents/actions.ts', 'convex/connectors/routing/actions.ts'],
+    rules: {
+      '@convex-dev/import-wrong-runtime': 'off',
+    },
+  },
+
+  // Allow intentional query-in-loop for polling patterns
+  {
+    files: ['convex/agents/mutations.ts'],
+    rules: {
+      'convex-rules/no-query-in-loop': 'off',
+    },
+  },
+]
+```
+
+### Convex file structure convention
+
+The rules enforce this standard structure:
+
+```
+convex/
+  {domain}/
+    queries.ts              query(), internalQuery()
+    mutations.ts            mutation(), internalMutation()
+    actions.ts              action(), internalAction()
+    internal_mutations.ts   internalMutation() (optional split)
+    validators.ts           v.* validators + types (v.any() aliases go here)
+    schema.ts               table definitions
+  lib/
+    validators.ts           shared v.any() aliases
+  _generated/               auto-generated (excluded from linting)
+  migrations/               relaxed rules (one-shot scripts)
+```
+
+**Key conventions:**
+- Factories (`query()`, `mutation()`, `action()`) only in standard-named files
+- Each factory type in its designated file (queries in `queries.ts`, mutations in `mutations.ts`)
+- `snake_case` filenames (underscores, not hyphens)
+- `v.any()` only in `validators.ts` files — define named aliases instead
+- Every factory must have both `args` and `returns` validators
+- No `ctx.db.query()`/`get()` inside loops — use `Promise.all()` with `.map()`
+- No `.filter()` on queries — use `.withIndex()`
 
 ## What's included
 
@@ -154,6 +233,13 @@ Add to `.vscode/settings.json` for monorepo support:
     "./packages/your-package"
   ]
 }
+```
+
+## Releasing
+
+```sh
+pnpm version patch|minor|major   # bumps version, commits, tags
+git push && git push --tags      # CI: test -> npm publish -> GitHub Release
 ```
 
 ## License
