@@ -1,0 +1,263 @@
+# @vllnt/eslint-config
+
+> Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces error — no warnings, no compromises.
+
+ESLint v9+ flat config with 7 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
+
+## Docs
+
+### README
+Source: README.md
+
+# @vllnt/eslint-config
+
+**Strict, opinionated ESLint flat config for TypeScript projects.**
+Every rule enforces `error` — no warnings, no compromises.
+
+## Why
+
+- **ESLint v9+ flat config only** — no legacy `.eslintrc`
+- **TypeScript-first** with `strictTypeChecked` + `stylisticTypeChecked`
+- **Prettier built-in** — formatting as lint errors, zero config
+- **7 presets** — Base, React, Next.js, Node.js, Convex, Turbo, Boundaries
+- **Composable** — spread arrays, override anything
+
+## Install
+
+```sh
+pnpm add -D @vllnt/eslint-config eslint typescript prettier
+```
+
+## Quick start
+
+```js
+// eslint.config.js
+import { nextjs } from '@vllnt/eslint-config/nextjs'
+
+export default [...nextjs]
+```
+
+Each preset is an array — spread it into your flat config. All presets include `projectService: true` for type-aware linting.
+
+## Presets
+
+| Import | Use case |
+|--------|----------|
+| `@vllnt/eslint-config` | Base — TypeScript strict + Prettier + import sorting |
+| `@vllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y + core web vitals) |
+| `@vllnt/eslint-config/react` | React apps without Next.js |
+| `@vllnt/eslint-config/nodejs` | Node.js backends |
+| `@vllnt/eslint-config/convex` | Convex backends (4 official + 7 custom rules) |
+| `@vllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
+| `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
+
+## Composing presets
+
+Mix and match — presets are arrays:
+
+```js
+import { nodejs } from '@vllnt/eslint-config/nodejs'
+import { turbo } from '@vllnt/eslint-config/turbo'
+
+export default [...nodejs, ...turbo]
+```
+
+Override any rule by appending a config object:
+
+```js
+import { nodejs } from '@vllnt/eslint-config/nodejs'
+
+export default [
+  ...nodejs,
+  {
+    rules: {
+      'max-lines-per-function': ['error', { max: 50 }],
+    },
+  },
+]
+```
+
+## Convex preset
+
+The Convex preset enforces backend best practices with **4 official rules** + **7 custom rules** bundled as `eslint-plugin-convex-rules`.
+
+### Setup
+
+```js
+// Standalone
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [...convex]
+```
+
+```js
+// With base (recommended)
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [...base, ...convex]
+```
+
+### Official rules (`@convex-dev`)
+
+| Rule | Catches |
+|------|---------|
+| `no-old-registered-function-syntax` | Deprecated function syntax |
+| `require-args-validator` | Missing `args` validator |
+| `explicit-table-ids` | Implicit table ID types |
+| `import-wrong-runtime` | Wrong runtime imports (Node in Convex runtime) |
+
+### Custom rules (`convex-rules`)
+
+| Rule | Catches |
+|------|---------|
+| `standard-filenames` | Factories outside `queries.ts`, `mutations.ts`, `actions.ts` |
+| `namespace-separation` | `query()` in `mutations.ts`, `mutation()` in `queries.ts` |
+| `snake-case-filenames` | Hyphens in `convex/` filenames (must be `snake_case`) |
+| `no-bare-v-any` | `v.any()` outside `validators.ts` |
+| `require-returns-validator` | Missing `returns` validator in factory config |
+| `no-query-in-loop` | N+1 queries (`ctx.db.query`/`get`/`runQuery` inside loops) |
+| `no-filter-on-query` | `.filter()` on query chains (use `.withIndex()`) |
+
+### Auto-applied overrides
+
+- **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
+- **Migration files** (`convex/migrations/**`) — exempt from `standard-filenames`, `namespace-separation`, `no-query-in-loop`
+- **Generated/test files** (`convex/_generated/**`, `*.test.ts`, `convex/testing/**`) — excluded entirely
+
+### Project-specific overrides
+
+```js
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [
+  ...base,
+  ...convex,
+
+  // Exempt "use node" action files from import-wrong-runtime
+  {
+    files: ['convex/agents/actions.ts'],
+    rules: { '@convex-dev/import-wrong-runtime': 'off' },
+  },
+]
+```
+
+### Enforced file structure
+
+```
+convex/
+  {domain}/
+    queries.ts              query(), internalQuery()
+    mutations.ts            mutation(), internalMutation()
+    actions.ts              action(), internalAction()
+    internal_mutations.ts   internalMutation() (optional split)
+    validators.ts           v.* validators + types
+    schema.ts               table definitions
+  lib/
+    validators.ts           shared v.any() aliases
+  _generated/               auto-generated (excluded)
+  migrations/               relaxed rules
+```
+
+## What's included
+
+### Base (all presets)
+
+| Plugin | What it does |
+|--------|-------------|
+| @eslint/js | ESLint recommended rules |
+| typescript-eslint | `strictTypeChecked` + `stylisticTypeChecked` |
+| eslint-plugin-prettier | Prettier as ESLint errors |
+| eslint-config-prettier | Disables conflicting rules |
+| eslint-plugin-perfectionist | Import/object/type sorting |
+| eslint-plugin-unicorn | Modern JS best practices |
+| eslint-plugin-simple-import-sort | Import ordering |
+| eslint-plugin-functional | Functional patterns (no loops, readonly) |
+| eslint-plugin-write-good-comments | Comment quality |
+
+### React additions
+
+| Plugin | What it does |
+|--------|-------------|
+| eslint-plugin-react | Recommended + jsx-runtime |
+| eslint-plugin-react-hooks | Rules of hooks |
+| eslint-plugin-jsx-a11y | Accessibility |
+| eslint-plugin-css-modules | CSS module validation |
+
+### Next.js additions
+
+Everything in React, plus:
+
+| Plugin | What it does |
+|--------|-------------|
+| @next/eslint-plugin-next | Recommended + core web vitals (all `error`) |
+
+### Opt-in
+
+| Preset | Plugin |
+|--------|--------|
+| Turbo | eslint-plugin-turbo cache rules |
+| Boundaries | eslint-plugin-boundaries architecture enforcement |
+
+## Peer dependencies
+
+| Package | Required |
+|---------|----------|
+| `eslint` >= 9 | Yes |
+| `prettier` >= 3 | Yes |
+| `typescript` >= 5 | Optional |
+
+## License
+
+MIT
+
+### Contributing
+Source: CONTRIBUTING.md
+
+See CONTRIBUTING.md for development setup, project structure, and pull request guidelines.
+
+### Changelog
+Source: CHANGELOG.md
+
+## [1.0.1] - 2026-03-29
+
+### Fixed
+
+- Resolve 23 transitive dependency vulnerabilities (#12)
+- Bump @convex-dev/eslint-plugin ^1.1.1 to ^1.2.1
+- Bump eslint (dev) ^9.39.2 to ^9.39.4
+- Add pnpm.overrides for handlebars (pinned by upstream @boundaries/elements)
+
+## [1.0.0] - 2026-03-14
+
+### Added
+
+- Initial release
+- 7 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries
+- TypeScript-first with strictTypeChecked + stylisticTypeChecked
+- Prettier built-in as lint errors
+- 7 custom Convex lint rules bundled as eslint-plugin-convex-rules
+- Smoke tests with 43 assertions
+- CI/CD with GitHub Actions
+
+### Agents
+Source: AGENTS.md
+
+See AGENTS.md for AI agent instructions, architecture overview, and conventions.
+
+## Optional
+
+### Security Policy
+Source: SECURITY.md
+
+Supported versions: 1.x. Report vulnerabilities via GitHub Security Advisories or X DM (@bntvllnt). Response within 48 hours.
+
+### Code of Conduct
+Source: CODE_OF_CONDUCT.md
+
+Adapted from Contributor Covenant v2.1. Report violations via Discord (bntvllnt.com/discord) or X DM (bntvllnt.com/x).
+
+### License
+
+MIT License. See LICENSE file for full text.

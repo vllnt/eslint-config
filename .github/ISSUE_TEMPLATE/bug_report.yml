@@ -1,0 +1,40 @@
+name: Bug Report
+description: Report a bug with @vllnt/eslint-config
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Minimal eslint.config.js and steps to reproduce
+      render: js
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: "@vllnt/eslint-config version"
+      placeholder: "1.0.1"
+    validations:
+      required: true
+  - type: input
+    id: eslint-version
+    attributes:
+      label: ESLint version
+      placeholder: "9.39.4"
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: "22.x"
+    validations:
+      required: true
