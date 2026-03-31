@@ -46,6 +46,6 @@ tests/
 
 ## Publishing
 
-Push to main triggers canary publish. For releases: bump version in package.json,
-add CHANGELOG.md entry, merge PR, then trigger `workflow_dispatch`. CI creates
-git tag, publishes to npm, and creates GitHub Release with notes from CHANGELOG.md.
+Push to main auto-detects new versions. If package.json version has no git tag,
+CI creates the tag, publishes to npm, and creates a GitHub Release with notes
+from CHANGELOG.md. Non-release pushes publish a canary version.

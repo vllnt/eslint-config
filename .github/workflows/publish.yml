@@ -3,16 +3,9 @@ name: Publish
 on:
   push:
     branches: [main]
-    paths:
-      - "flat/**"
-      - "tests/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/publish.yml"
-  workflow_dispatch:
 
 concurrency:
-  group: publish-${{ github.event_name }}
+  group: publish
   cancel-in-progress: true
 
 permissions:
@@ -37,10 +30,35 @@ jobs:
 
       - run: pnpm test
 
+  check-version:
+    name: Check Version
+    needs: quality
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      is_new_release: ${{ steps.meta.outputs.is_new_release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect release
+        id: meta
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "is_new_release=false" >> "$GITHUB_OUTPUT"
+            echo "Tag v$VERSION exists — canary only"
+          else
+            echo "is_new_release=true" >> "$GITHUB_OUTPUT"
+            echo "No tag v$VERSION — new release"
+          fi
+
   canary:
     name: Publish Canary
-    needs: quality
-    if: github.event_name == 'push'
+    needs: check-version
+    if: needs.check-version.outputs.is_new_release == 'false'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -74,8 +92,8 @@ jobs:
 
   release:
     name: Publish Release
-    needs: quality
-    if: github.event_name == 'workflow_dispatch'
+    needs: check-version
+    if: needs.check-version.outputs.is_new_release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -96,16 +114,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Read version
-        id: version
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
       - name: Extract release notes from CHANGELOG.md
         id: changelog
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ needs.check-version.outputs.version }}"
           NOTES=$(awk -v ver="$VERSION" '
             BEGIN { found=0 }
             /^## \[/ {
@@ -129,7 +141,7 @@ jobs:
 
       - name: Create git tag
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ needs.check-version.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "v$VERSION" -m "Release v$VERSION"
@@ -148,7 +160,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ needs.check-version.outputs.version }}"
           gh release create "v$VERSION" \
             --title "@vllnt/eslint-config v$VERSION" \
             --notes "${{ steps.changelog.outputs.notes }}"
