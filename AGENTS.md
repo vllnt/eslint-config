@@ -46,5 +46,6 @@ tests/
 
 ## Publishing
 
-Push to main triggers canary publish. Use `workflow_dispatch` for releases.
-See CLAUDE.md for full publishing instructions.
+Push to main triggers canary publish. For releases: bump version in package.json,
+add CHANGELOG.md entry, merge PR, then trigger `workflow_dispatch`. CI creates
+git tag, publishes to npm, and creates GitHub Release with notes from CHANGELOG.md.

@@ -27,15 +27,11 @@ git push && git push --tags
 
 ## Publishing (CI)
 
-Push a version tag — CI handles the rest:
-
-```sh
-pnpm version patch
-git push && git push --tags
-# release.yml: test → npm publish --provenance → GitHub Release
-```
-
-Requires `NPM_TOKEN` secret in GitHub repo settings.
+1. Bump version in `package.json`
+2. Add entry to `CHANGELOG.md` (CI enforces this)
+3. Merge PR (CI verifies version matches CHANGELOG)
+4. Trigger **Publish** workflow manually (`workflow_dispatch`)
+5. CI creates git tag, publishes to npm, creates GitHub Release with notes from CHANGELOG.md
 
 ## Project structure
 

@@ -28,3 +28,28 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm test
+
+  changelog:
+    name: Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CHANGELOG.md updated
+        run: |
+          if ! git diff --name-only origin/main...HEAD | grep -q '^CHANGELOG.md$'; then
+            echo "::error::CHANGELOG.md must be updated in every PR"
+            exit 1
+          fi
+
+      - name: Version matches CHANGELOG
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          CL_VERSION=$(grep -oP '(?<=## \[)[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md | head -1)
+          if [ "$PKG_VERSION" != "$CL_VERSION" ]; then
+            echo "::error::package.json version ($PKG_VERSION) does not match latest CHANGELOG.md entry ($CL_VERSION)"
+            exit 1
+          fi
+          echo "Versions match: $PKG_VERSION"
