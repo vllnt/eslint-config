@@ -28,10 +28,11 @@ git push && git push --tags
 ## Publishing (CI)
 
 1. Bump version in `package.json`
-2. Add entry to `CHANGELOG.md` (CI enforces this)
-3. Merge PR (CI verifies version matches CHANGELOG)
-4. Trigger **Publish** workflow manually (`workflow_dispatch`)
-5. CI creates git tag, publishes to npm, creates GitHub Release with notes from CHANGELOG.md
+2. Add entry to `CHANGELOG.md` (CI enforces both)
+3. Merge PR → CI auto-detects new version, creates git tag, publishes to npm,
+   and creates GitHub Release with notes from CHANGELOG.md
+
+Non-release pushes to main publish a canary version automatically.
 
 ## Project structure
 

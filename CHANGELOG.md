@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [1.0.1] - 2026-03-29
 
+### Changed
+
+- CI: auto-release on push to main when new version detected (replaces manual workflow_dispatch)
+- CI: enforce CHANGELOG.md updated in every PR with version match check
+
 ### Fixed
 
 - Resolve 23 transitive dependency vulnerabilities (1 critical, 14 high, 7 moderate, 1 low) (#12)
