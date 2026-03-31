@@ -10,15 +10,6 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/publish.yml"
   workflow_dispatch:
-    inputs:
-      bump:
-        description: "Version bump type"
-        required: true
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
 
 concurrency:
   group: publish-${{ github.event_name }}
@@ -105,58 +96,44 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Bump version
+      - name: Read version
         id: version
         run: |
-          npm version ${{ inputs.bump }} --no-git-tag-version
           VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Generate changelog
+      - name: Extract release notes from CHANGELOG.md
         id: changelog
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$LAST_TAG" ]; then
-            RANGE="HEAD"
-          else
-            RANGE="${LAST_TAG}..HEAD"
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES=$(awk -v ver="$VERSION" '
+            BEGIN { found=0 }
+            /^## \[/ {
+              if (found) exit
+              if (index($0, "[" ver "]")) { found=1; next }
+            }
+            found && /^[[:space:]]*$/ && !printed { next }
+            found { printed=1; print }
+          ' CHANGELOG.md)
+
+          if [ -z "$NOTES" ]; then
+            echo "::warning::No release notes found in CHANGELOG.md for v$VERSION"
+            NOTES="Release v$VERSION"
           fi
 
           {
-            echo "body<<CHANGELOG_EOF"
-
-            FEATS=$(git log "$RANGE" --pretty=format:"%s" --grep="^feat" 2>/dev/null || true)
-            if [ -n "$FEATS" ]; then
-              echo "### Features"
-              echo "$FEATS" | sed 's/^/- /'
-              echo ""
-            fi
-
-            FIXES=$(git log "$RANGE" --pretty=format:"%s" --grep="^fix" 2>/dev/null || true)
-            if [ -n "$FIXES" ]; then
-              echo "### Bug Fixes"
-              echo "$FIXES" | sed 's/^/- /'
-              echo ""
-            fi
-
-            OTHERS=$(git log "$RANGE" --pretty=format:"%s" --invert-grep --grep="^feat" --grep="^fix" 2>/dev/null || true)
-            if [ -n "$OTHERS" ]; then
-              echo "### Other Changes"
-              echo "$OTHERS" | sed 's/^/- /'
-              echo ""
-            fi
-
-            echo "CHANGELOG_EOF"
+            echo "notes<<CHANGELOG_DELIM"
+            echo "$NOTES"
+            echo "CHANGELOG_DELIM"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Commit and tag
+      - name: Create git tag
         run: |
+          VERSION="${{ steps.version.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json
-          git commit -m "chore(release): v${{ steps.version.outputs.version }}"
-          git tag "v${{ steps.version.outputs.version }}"
-          git push origin main --follow-tags
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
 
       - name: Upgrade npm for OIDC support
         run: npm install -g npm@latest
@@ -169,8 +146,9 @@ jobs:
 
       - name: Create GitHub Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
-          gh release create "v${{ steps.version.outputs.version }}" \
-            --title "@vllnt/eslint-config v${{ steps.version.outputs.version }}" \
-            --notes "${{ steps.changelog.outputs.body }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          gh release create "v$VERSION" \
+            --title "@vllnt/eslint-config v$VERSION" \
+            --notes "${{ steps.changelog.outputs.notes }}"

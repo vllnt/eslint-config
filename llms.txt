@@ -1,0 +1,18 @@
+# @vllnt/eslint-config
+
+> Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces error — no warnings, no compromises.
+
+ESLint v9+ flat config with 7 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
+
+## Docs
+
+- [README](README.md): Project overview, presets, installation, and usage guide
+- [Contributing](CONTRIBUTING.md): Contribution guidelines and development setup
+- [Changelog](CHANGELOG.md): Version history and release notes
+- [Agents](AGENTS.md): AI agent instructions for working with this codebase
+
+## Optional
+
+- [Security Policy](SECURITY.md): Vulnerability reporting and disclosure policy
+- [Code of Conduct](CODE_OF_CONDUCT.md): Community guidelines
+- [License](LICENSE): MIT license
