@@ -9,5 +9,6 @@ export const boundariesConfig = {
   },
   rules: {
     ...boundariesPlugin.configs.recommended.rules,
+    'boundaries/no-private': ['error', { allowUncles: true }],
   },
 }
