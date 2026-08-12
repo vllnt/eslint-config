@@ -2,6 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import convexPlugin from '@convex-dev/eslint-plugin'
 import unicornPlugin from 'eslint-plugin-unicorn'
+import convexRulesPlugin from '../flat/convex-plugin.js'
 import { boundariesConfig } from '../flat/core/boundaries.js'
 import { unicornConfig, unicornTsx, unicornFilename } from '../flat/core/unicorn.js'
 import { convex } from '../flat/convex.js'
@@ -79,7 +80,7 @@ describe('unicorn curation: every rule is an explicit decision', () => {
   })
 })
 
-describe('boundaries: no-private stays enforced despite v6 recommended disabling it', () => {
+describe('boundaries: no-private stays enforced despite recommended disabling it', () => {
   it('boundaries/no-private is pinned as error with allowUncles', () => {
     assert.deepEqual(boundariesConfig.rules['boundaries/no-private'], [
       'error',
@@ -100,5 +101,9 @@ describe('convex: every official @convex-dev rule is pinned as error', () => {
       .map((ruleName) => `@convex-dev/${ruleName}`)
       .filter((ruleId) => pinned.get(ruleId) !== 'error')
     assert.deepEqual(missing, [], `official convex rules not pinned as error: ${missing.join(', ')}`)
+  })
+
+  it('does not duplicate official rules in the bundled plugin', () => {
+    assert.equal(convexRulesPlugin.rules['no-filter-on-query'], undefined)
   })
 })

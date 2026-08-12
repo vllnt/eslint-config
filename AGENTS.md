@@ -15,17 +15,19 @@ flat/           ← shipped code (included in npm tarball)
   turbo.js      ← Turborepo preset
   boundaries.js ← Architecture boundaries preset
   convex-plugin.js    ← convex-rules ESLint plugin
-  convex-rules/       ← 7 custom Convex lint rules
+  convex-rules/       ← 6 custom Convex lint rules
   core/               ← shared config fragments
 tests/
-  smoke.test.js ← export/shape/hygiene tests (node:test)
+  smoke.test.js       ← export/shape/hygiene tests (node:test)
+  rules.test.js       ← configured-rule and plugin-contract guards
+  preset-lint.test.js ← real ESLint execution for every preset
 ```
 
 ## Commands
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke tests (43 assertions) |
+| `pnpm test` | Smoke, rule-contract, and real-preset tests (62 assertions) |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture

@@ -18,7 +18,7 @@
     "prettier"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=20.10"
   },
   "packageManager": "pnpm@10.28.2",
   "files": [
@@ -39,28 +39,28 @@
     "prepublishOnly": "node --test tests/*.test.js"
   },
   "dependencies": {
-    "@convex-dev/eslint-plugin": "^2.0.0",
-    "@eslint/js": "^9.39.4",
-    "@next/eslint-plugin-next": "^16.2.7",
+    "@convex-dev/eslint-plugin": "^3.0.0",
+    "@eslint/js": "^9.39.5",
+    "@next/eslint-plugin-next": "^16.3.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-boundaries": "^6.0.2",
+    "eslint-plugin-boundaries": "7.1.x",
     "eslint-plugin-css-modules": "^2.12.0",
-    "eslint-plugin-functional": "^9.0.2",
+    "eslint-plugin-functional": "^10.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-perfectionist": "^5.9.0",
+    "eslint-plugin-perfectionist": "^5.10.1",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "eslint-plugin-turbo": "^2.9.16",
-    "eslint-plugin-unicorn": "64.x",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "eslint-plugin-turbo": "2.10.8",
+    "eslint-plugin-unicorn": "65.x",
     "eslint-plugin-write-good-comments": "^0.2.0",
-    "typescript-eslint": "^8.60.0"
+    "typescript-eslint": "8.66.x"
   },
   "peerDependencies": {
-    "eslint": ">=9",
+    "eslint": ">=9.38 <10",
     "prettier": ">=3",
-    "typescript": ">=5"
+    "typescript": ">=5 <6.1"
   },
   "peerDependenciesMeta": {
     "typescript": {
@@ -72,13 +72,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "eslint": "^9.39.4",
+    "convex": "^1.43.0",
+    "eslint": "^9.39.5",
+    "react": "19.2.8",
+    "turbo": "2.10.8",
     "typescript": "^5.9.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "handlebars": ">=4.7.9",
-      "turbo": ">=2.9.14"
-    }
   }
 }

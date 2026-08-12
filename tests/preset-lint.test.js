@@ -14,18 +14,27 @@ const PRESETS = [
   { subpath: './react', name: 'react', files: ['src/sample.ts', 'src/component.tsx'] },
   { subpath: './convex', name: 'convex', files: ['convex/messages.ts'] },
   { subpath: './turbo', name: 'turbo', files: ['src/plain.js'] },
-  { subpath: './boundaries', name: 'boundaries', files: ['src/plain.js'] },
+  {
+    subpath: './boundaries',
+    name: 'boundaries',
+    files: ['src/plain.js'],
+    consumerConfig: {
+      settings: {
+        'boundaries/files': [{ category: 'source', pattern: '**/*' }],
+      },
+    },
+  },
 ]
 
 describe('preset lint: real ESLint run per preset — config, options, and parse must hold', () => {
-  for (const { subpath, name, files } of PRESETS) {
+  for (const { subpath, name, files, consumerConfig } of PRESETS) {
     it(`${subpath} lints fixture without config/schema/fatal errors`, async () => {
       const file = subpath === '.' ? 'index' : subpath.slice(2)
       const mod = await import(`../flat/${file}.js`)
       const eslint = new ESLint({
         cwd: FIXTURE_DIR,
         overrideConfigFile: true,
-        overrideConfig: mod[name],
+        overrideConfig: consumerConfig ? [...mod[name], consumerConfig] : mod[name],
       })
       const results = await eslint.lintFiles(files)
       assert.ok(results.length > 0, `no fixture files linted for preset "${name}"`)

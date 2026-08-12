@@ -8,8 +8,8 @@ Every rule enforces `error` — no warnings, no compromises.
 [![npm version](https://img.shields.io/npm/v/@vllnt/eslint-config?color=cb0000&label=npm)](https://www.npmjs.com/package/@vllnt/eslint-config)
 [![CI](https://img.shields.io/github/actions/workflow/status/vllnt/eslint-config/ci.yml?label=CI)](https://github.com/vllnt/eslint-config/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![ESLint](https://img.shields.io/badge/eslint-%3E%3D9-4B32C3)](https://eslint.org)
+[![Node](https://img.shields.io/badge/node-%3E%3D20.10-brightgreen)](https://nodejs.org)
+[![ESLint](https://img.shields.io/badge/eslint-9.38--9.x-4B32C3)](https://eslint.org)
 
 </div>
 
@@ -17,7 +17,7 @@ Every rule enforces `error` — no warnings, no compromises.
 
 ## Why
 
-- **ESLint v9+ flat config only** — no legacy `.eslintrc`
+- **ESLint 9 flat config only** — no legacy `.eslintrc`
 - **TypeScript-first** with `strictTypeChecked` + `stylisticTypeChecked`
 - **Prettier built-in** — formatting as lint errors, zero config
 - **7 presets** — Base, React, Next.js, Node.js, Convex, Turbo, Boundaries
@@ -48,7 +48,7 @@ Each preset is an array — spread it into your flat config. All presets include
 | `@vllnt/eslint-config/nextjs` | Next.js apps (includes React + a11y + core web vitals) |
 | `@vllnt/eslint-config/react` | React apps without Next.js |
 | `@vllnt/eslint-config/nodejs` | Node.js backends |
-| `@vllnt/eslint-config/convex` | Convex backends (4 official + 7 custom rules) |
+| `@vllnt/eslint-config/convex` | Convex backends (7 official + 6 custom rules) |
 | `@vllnt/eslint-config/turbo` | Turborepo cache rules (opt-in) |
 | `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in) |
 
@@ -128,7 +128,7 @@ Route handler method restrictions, page/layout `max-lines-per-function` override
 
 ## Convex preset
 
-The Convex preset enforces backend best practices with **4 official rules** + **7 custom rules** bundled as `eslint-plugin-convex-rules`.
+The Convex preset enforces backend best practices with **7 official rules** + **6 custom rules** bundled as `eslint-plugin-convex-rules`. It requires Convex 1.43 or newer.
 
 ### Setup
 
@@ -155,6 +155,9 @@ export default [...base, ...convex]
 | `require-args-validator` | Missing `args` validator |
 | `explicit-table-ids` | Implicit table ID types |
 | `import-wrong-runtime` | Wrong runtime imports (Node in Convex runtime) |
+| `no-filter-in-query` | Inefficient `.filter()` calls on database query chains |
+| `no-collect-in-query` | Unbounded `.collect()` calls in queries |
+| `no-top-of-hour-crons` | Cron schedules concentrated at the top of the hour |
 
 ### Custom rules (`convex-rules`)
 
@@ -166,7 +169,6 @@ export default [...base, ...convex]
 | `no-bare-v-any` | `v.any()` outside `validators.ts` |
 | `require-returns-validator` | Missing `returns` validator in factory config |
 | `no-query-in-loop` | N+1 queries (`ctx.db.query`/`get`/`runQuery` inside loops) |
-| `no-filter-on-query` | `.filter()` on query chains (use `.withIndex()`) |
 
 ### Auto-applied overrides
 
@@ -215,9 +217,11 @@ convex/
 
 | Package | Required |
 |---------|----------|
-| `eslint` >= 9 | Yes |
+| Node.js >= 20.10 | Yes |
+| `eslint` >= 9.38 and < 10 | Yes |
 | `prettier` >= 3 | Yes |
-| `typescript` >= 5 | Optional |
+| `typescript` >= 5 and < 6.1 | Optional |
+| `convex` >= 1.43 | Only for the Convex preset |
 
 ## VS Code
 

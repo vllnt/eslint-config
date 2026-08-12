@@ -4,20 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.0.0] - 2026-06-10
+## [2.0.0] - 2026-08-12
 
 ### Changed (BREAKING)
 
-- `eslint-plugin-unicorn` ^62.0.0 → `64.x`: 38 newly curated rules enforced as `error` (34 pre-existing curation gaps + 4 added in v63/v64); `unicorn/isolated-functions` explicitly `off` (outer-scope-variable restriction too aggressive for general code). Range capped below v65 because v65 removes `better-regex` and renames `prefer-dom-node-dataset` — a caret range would break consumers resolving v65 against this config; migration queued.
-- Deprecated unicorn pins migrated to successors: `no-instanceof-array` → `no-instanceof-builtins`, `no-array-push-push` → `prefer-single-call`
-- `eslint-plugin-boundaries` ^5.4.0 → ^6.0.2: `boundaries/no-private` re-pinned as `['error', { allowUncles: true }]` (v6 recommended disables it; v5 strictness preserved); v6's expanded `dependency-nodes` default (`import`, `export`, `require`, `dynamic-import`) adopted — new findings possible
-- `@convex-dev/eslint-plugin` ^1.2.1 → ^2.0.0: consuming projects need `convex >= 1.34.1`; `no-filter-in-query` + `no-collect-in-query` pinned as `error` (all 6 official rules enforced)
-- `eslint-plugin-simple-import-sort` ^12.1.1 → ^13.0.0: deterministic ordering for same-source multi-style imports (autofix may reorder existing imports once)
+- `eslint-plugin-unicorn` ^62.0.0 → `65.x`: every active rule is now explicitly curated. New rules are enforced as `error`; `unicorn/isolated-functions` remains explicitly `off` because its outer-scope restriction is too aggressive for a general-purpose config. Deprecated rules were removed or migrated to `no-instanceof-builtins`, `prefer-single-call`, `dom-node-dataset`, and `consistent-json-file-read`. The range is capped below v66, which requires Node 22 and ESLint 10.4.
+- `eslint-plugin-boundaries` ^5.4.0 → `7.1.x`: `boundaries/no-private` remains explicitly enforced as `['error', { allowUncles: true }]` because the recommended config disables it. Expanded dependency-node detection is adopted, so new findings are possible.
+- `@convex-dev/eslint-plugin` ^1.2.1 → ^3.0.0: consuming projects using the Convex preset need Convex 1.43 or newer. All 7 official rules are enforced, including `no-filter-in-query`, `no-collect-in-query`, and `no-top-of-hour-crons`.
+- The bundled `convex-rules/no-filter-on-query` rule was removed because the official Convex plugin now owns the capability; the custom-rule count is now 6.
+- `eslint-plugin-functional` ^9.0.2 → ^10.0.0 and `eslint-plugin-simple-import-sort` ^12.1.1 → ^14.0.0. Import autofixes may reorder same-source multi-style imports once.
+- Runtime compatibility is now Node.js >= 20.10, ESLint >= 9.38 and < 10, and optional TypeScript >= 5 and < 6.1.
 
 ### Changed
 
-- Minor/patch bumps: `typescript-eslint` ^8.60.0, `@next/eslint-plugin-next` ^16.2.7, `eslint-plugin-perfectionist` ^5.9.0, `eslint-plugin-prettier` ^5.5.6, `eslint-plugin-react-hooks` ^7.1.1, `eslint-plugin-turbo` ^2.9.16, `@eslint/js` ^9.39.4
-- Deferred — published under the 7-day supply-chain maturity window: `eslint-plugin-unicorn` 65, `eslint-plugin-functional` 10, `typescript-eslint` 8.61, `eslint-plugin-turbo` 2.9.17, `@next/eslint-plugin-next` 16.2.9. ESLint 10 deferred separately: `eslint-plugin-react` (peer ≤ ^9.7) and `eslint-plugin-jsx-a11y` (peer ≤ ^9) do not support it yet.
+- Other upgrades: `typescript-eslint` 8.66.x, `@next/eslint-plugin-next` ^16.3.0, `eslint-plugin-perfectionist` ^5.10.1, `eslint-plugin-prettier` ^5.5.6, `eslint-plugin-react-hooks` ^7.1.1, `eslint-plugin-turbo` 2.10.8, `@eslint/js` ^9.39.5, and development ESLint ^9.39.5.
+- Convex ^1.43.0 and Turbo 2.10.8 are explicit development dependencies so the plugin peer versions exercised by tests are deterministic. React 19.2.8 provides deterministic version detection for the React preset integration test.
+- Deferred by the 7-day supply-chain maturity window: `eslint-plugin-boundaries` 7.2.0, `eslint-plugin-turbo` 2.10.9, and `typescript-eslint` 8.67.0. ESLint 10, Unicorn 66+, and TypeScript 7 remain deferred for peer and runtime compatibility.
 
 ### Added
 
@@ -26,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
-- Resolve 5 lockfile vulnerabilities (1 high: lodash `_.template` code injection; 3 moderate; 1 low) via transitive refresh and `turbo >= 2.9.14` override
+- Refresh the lockfile and move dependency controls to `pnpm-workspace.yaml`: a 7-day minimum release age plus patched `brace-expansion` overrides. `pnpm audit --prod` reports zero vulnerabilities.
 
 ## [1.0.1] - 2026-03-29
 
