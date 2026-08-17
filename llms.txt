@@ -2,7 +2,7 @@
 
 > Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces error — no warnings, no compromises.
 
-ESLint v9+ flat config with 7 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
+ESLint 9.38–9.x flat config with 7 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. The Convex preset enforces 7 official rules and bundles 6 custom rules as `eslint-plugin-convex-rules`; it requires Convex 1.43+.
 
 ## Docs
 

@@ -1,7 +1,7 @@
 /**
  * Convex ESLint config — strict backend best practices.
  *
- * Includes: all 4 @convex-dev official rules, 7 custom convex-rules
+ * Includes: all 7 @convex-dev official rules, 6 custom convex-rules
  * (structure, naming, query optimization, type safety), and
  * explicit-module-boundary-types for Convex functions.
  *
@@ -39,11 +39,14 @@ export const convex = [
     files: CONVEX_SOURCE,
     ignores: CONVEX_EXCLUDED,
     rules: {
-      // Official @convex-dev plugin (all 4 rules)
+      // Official @convex-dev plugin (all 7 rules)
       '@convex-dev/no-old-registered-function-syntax': 'error',
       '@convex-dev/require-args-validator': 'error',
       '@convex-dev/explicit-table-ids': 'error',
       '@convex-dev/import-wrong-runtime': 'error',
+      '@convex-dev/no-filter-in-query': 'error',
+      '@convex-dev/no-collect-in-query': 'error',
+      '@convex-dev/no-top-of-hour-crons': 'error',
 
       // Structure
       'convex-rules/standard-filenames': 'error',
@@ -56,7 +59,6 @@ export const convex = [
 
       // Query optimization
       'convex-rules/no-query-in-loop': 'error',
-      'convex-rules/no-filter-on-query': 'error',
 
       // Explicit return types on Convex functions
       '@typescript-eslint/explicit-module-boundary-types': 'error',
