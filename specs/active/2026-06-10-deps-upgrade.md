@@ -2,7 +2,7 @@
 title: Dependency upgrade — plugin majors on ESLint 9 (v2.0.0)
 status: active
 created: 2026-06-10
-updated: 2026-08-12
+updated: 2026-08-17
 estimate: 2.5h
 tier: mini
 ---
@@ -29,11 +29,11 @@ Verified against npm registry metadata on 2026-08-12.
 |------------|------|--------|------------------------|
 | `@convex-dev/eslint-plugin` | ^1.2.1 | ^3.0.0 | Requires Convex ^1.43.0; adds a seventh official rule |
 | `eslint-plugin-unicorn` | ^62.0.0 | 65.x | Requires Node ^20.10 or newer and ESLint >=9.38; cap below v66 |
-| `eslint-plugin-boundaries` | ^5.4.0 | 7.1.x | v7.2 is inside the 7-day maturity window |
-| `eslint-plugin-functional` | ^9.0.2 | ^10.0.0 | Supports ESLint 9 and Node 20 |
+| `eslint-plugin-boundaries` | ^5.4.0 | 7.2.x | v7.2.0 has aged past the 7-day maturity window; Node >=18.18 and ESLint >=6 peer remain compatible |
+| `eslint-plugin-functional` | ^9.0.2 | ^10.0.0 | Supports ESLint 9 and Node 20; patched `deepmerge-ts` is forced by pnpm security override |
 | `eslint-plugin-simple-import-sort` | ^12.1.1 | ^14.0.0 | Supports ESLint 9 |
-| `eslint-plugin-turbo` | ^2.8.10 | 2.10.8 | v2.10.9 is inside the maturity window |
-| `typescript-eslint` | ^8.56.0 | 8.66.x | v8.67 is inside the maturity window; TypeScript must remain <6.1 |
+| `eslint-plugin-turbo` | ^2.8.10 | 2.10.9 | v2.10.9 has aged past the 7-day maturity window; v2.10.10 remains deferred |
+| `typescript-eslint` | ^8.56.0 | 8.67.x | v8.67.0 has aged past the 7-day maturity window; TypeScript must remain <6.1 |
 | `@next/eslint-plugin-next` | ^16.1.6 | ^16.3.0 | Compatible update |
 | `eslint-plugin-perfectionist` | ^5.6.0 | ^5.10.1 | Compatible update |
 | `eslint-plugin-prettier` | ^5.5.5 | ^5.5.6 | Compatible update |
@@ -64,8 +64,9 @@ Verified against npm registry metadata on 2026-08-12.
 - Keep the boundaries strictness override that upstream recommended configs omit.
 - Add permanent rule-existence, curation-exhaustiveness, and real-preset tests.
 - Move pnpm dependency controls out of the ignored `package.json#pnpm` field and
-  into `pnpm-workspace.yaml`, including the 7-day minimum release age and
-  transitive security overrides.
+  into `pnpm-workspace.yaml`, including the 7-day minimum release age,
+  transitive security overrides, and a narrow `deepmerge-ts` release-age
+  exception for GHSA-ggr8-5vv4-36mx.
 - Update README, llms documents, agent/contributor guidance, security policy, and
   changelog in the same release commit.
 
@@ -87,6 +88,8 @@ Verified against npm registry metadata on 2026-08-12.
 
 ## Deferred updates
 
-The following stable releases were less than seven days old on 2026-08-12 and
-remain intentionally deferred: `eslint-plugin-boundaries` 7.2.0,
-`eslint-plugin-turbo` 2.10.9, and `typescript-eslint` 8.67.0.
+The 2026-08-17 refresh adopts the previously deferred mature releases
+`eslint-plugin-boundaries` 7.2.0, `eslint-plugin-turbo` 2.10.9, and
+`typescript-eslint` 8.67.0. `eslint-plugin-turbo` 2.10.10 remains intentionally
+deferred because it was published on 2026-08-14 and is still inside the 7-day
+supply-chain maturity window.

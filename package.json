@@ -43,7 +43,7 @@
     "@eslint/js": "^9.39.5",
     "@next/eslint-plugin-next": "^16.3.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-boundaries": "7.1.x",
+    "eslint-plugin-boundaries": "7.2.x",
     "eslint-plugin-css-modules": "^2.12.0",
     "eslint-plugin-functional": "^10.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -52,10 +52,10 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-simple-import-sort": "^14.0.0",
-    "eslint-plugin-turbo": "2.10.8",
+    "eslint-plugin-turbo": "2.10.9",
     "eslint-plugin-unicorn": "65.x",
     "eslint-plugin-write-good-comments": "^0.2.0",
-    "typescript-eslint": "8.66.x"
+    "typescript-eslint": "8.67.x"
   },
   "peerDependencies": {
     "eslint": ">=9.38 <10",
@@ -75,7 +75,7 @@
     "convex": "^1.43.0",
     "eslint": "^9.39.5",
     "react": "19.2.8",
-    "turbo": "2.10.8",
+    "turbo": "2.10.9",
     "typescript": "^5.9.3"
   }
 }
