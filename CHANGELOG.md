@@ -11,7 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Require the TypeScript 6 compatibility API (`>=6.0.2 <6.1`) for type-aware
   linting and validate the official side-by-side TypeScript 7 compiler setup.
 - Upgrade and pin `typescript-eslint` to `8.68.0` so package managers cannot
-  select an unpublished companion package, and refresh compatible lint plugins.
+  select an unpublished companion package, upgrade `eslint-plugin-functional`
+  to its TypeScript 6-compatible major, and refresh compatible lint plugins.
 - Upgrade `@convex-dev/eslint-plugin` to `^4.0.0`, retain the four established
   official rules, and apply the Convex preset directly to sandboxed
   `src/component/**` sources.
