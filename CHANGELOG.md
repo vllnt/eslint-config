@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2026-08-31
+
+### Changed
+
+- Require the TypeScript 6 compatibility API (`>=6.0.2 <6.1`) for type-aware
+  linting and validate the official side-by-side TypeScript 7 compiler setup.
+- Upgrade `typescript-eslint` to `^8.68.0` and refresh compatible lint plugins.
+- Upgrade `@convex-dev/eslint-plugin` to `^4.0.0`, retain the four established
+  official rules, and apply the Convex preset directly to sandboxed
+  `src/component/**` sources.
+- Correct the documented Node.js runtime floor to 20.
+
+### Breaking Changes
+
+- TypeScript 5 is no longer supported. Install TypeScript 7 through
+  `@typescript/native` and TypeScript 6 under the canonical `typescript` package
+  name when using JavaScript-API tooling.
+- Sandboxed `src/component/**` sources now receive the official Convex rules
+  directly from the preset.
+
 ## [1.0.1] - 2026-03-29
 
 ### Changed
@@ -31,5 +51,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Smoke tests with 43 assertions
 - CI/CD with GitHub Actions (test + canary publish + release)
 
+[2.0.0]: https://github.com/vllnt/eslint-config/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/vllnt/eslint-config/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/vllnt/eslint-config/releases/tag/v1.0.0
