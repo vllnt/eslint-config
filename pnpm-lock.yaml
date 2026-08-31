@@ -30,8 +30,8 @@ importers:
         specifier: ^2.12.0
         version: 2.12.0(eslint@9.39.5)
       eslint-plugin-functional:
-        specifier: ^9.0.5
-        version: 9.0.5(@typescript/typescript6@6.0.2)(eslint@9.39.5)
+        specifier: ^10.0.0
+        version: 10.0.0(@typescript/typescript6@6.0.2)(eslint@9.39.5)
       eslint-plugin-jsx-a11y:
         specifier: ^6.10.2
         version: 6.10.2(eslint@9.39.5)
@@ -989,9 +989,9 @@ packages:
     peerDependencies:
       eslint: '>=2.0.0'
 
-  eslint-plugin-functional@9.0.5:
-    resolution: {integrity: sha512-RYbNpGkGu5mSN7xlezyeE7TE3S9rsliAS5FOorZoxn7126UTslcQnoVOIAOA6fMOlz6dNG3x3cd3tuzrHM6mRA==}
-    engines: {node: '>=v18.18.0'}
+  eslint-plugin-functional@10.0.0:
+    resolution: {integrity: sha512-D/BWdGUvPz5uIC+kZM1BWrELhjHpDiYxIYjzF7a6TZ62KINajjKgOiSYGbGv4fpMT1enEC9yG+0kOaIRTZzpTg==}
+    engines: {node: '>=v20.0.0'}
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
       typescript: '>=4.7.4'
@@ -2908,7 +2908,7 @@ snapshots:
       gonzales-pe: 4.3.0
       lodash: 4.18.1
 
-  eslint-plugin-functional@9.0.5(@typescript/typescript6@6.0.2)(eslint@9.39.5):
+  eslint-plugin-functional@10.0.0(@typescript/typescript6@6.0.2)(eslint@9.39.5):
     dependencies:
       '@typescript-eslint/utils': 8.68.0(@typescript/typescript6@6.0.2)(eslint@9.39.5)
       deepmerge-ts: 7.1.6
