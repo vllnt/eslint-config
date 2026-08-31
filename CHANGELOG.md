@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
+
 ## [2.0.0] - 2026-08-31
 
 ### Changed

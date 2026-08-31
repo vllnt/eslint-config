@@ -35,8 +35,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "node --test tests/smoke.test.js",
-    "prepublishOnly": "node --test tests/smoke.test.js"
+    "test": "pnpm check:agents && node --test tests/smoke.test.js",
+    "prepublishOnly": "node --test tests/smoke.test.js",
+    "check:agents": "node -e \"const f=require('node:fs');if(!f.existsSync('AGENTS.md')||f.existsSync('CLAUDE.md')||f.existsSync('.claude'))process.exit(1)\""
   },
   "dependencies": {
     "@convex-dev/eslint-plugin": "^4.0.0",

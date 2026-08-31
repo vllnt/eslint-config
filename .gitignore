@@ -4,3 +4,6 @@ coverage/
 *.local
 .env
 .env.*
+
+# AGENTS.md is the only agent instruction surface
+.claude/

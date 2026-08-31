@@ -2,6 +2,11 @@
 
 Strict ESLint flat config for TypeScript projects. Scoped to `@vllnt` npm org.
 
+## Agent instructions
+
+`AGENTS.md` is the sole agent-instruction source for this repository. Do not add
+`CLAUDE.md` or `.claude` content.
+
 ## Project Structure
 
 ```
