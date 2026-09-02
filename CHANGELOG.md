@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Changed
 
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
+- Document ESLint Config Inspector, aggregate rule timing, granular per-file stats, and repeatable profiling practices.
 
 ## [2.0.0] - 2026-08-31
 

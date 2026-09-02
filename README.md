@@ -83,6 +83,69 @@ export default [
 ];
 ```
 
+## Inspecting and profiling ESLint
+
+Run these commands from the consuming project's root so they use its local ESLint,
+configuration, TypeScript project, and installed version of this package. No extra
+inspector dependency is required.
+
+### Inspect the effective configuration
+
+```sh
+pnpm exec eslint --inspect-config src/example.ts
+```
+
+ESLint installs and launches its Config Inspector, scoped to the supplied file.
+Use it to see which config objects match, where a rule was defined, and the final
+rule options. Inspect representative files from each environment (for example,
+application code, tests, generated code, and Convex code) because flat config is
+resolved per file.
+
+The inspector explains configuration; it does **not** profile lint performance.
+
+### Find slow rules
+
+```sh
+TIMING=1 pnpm exec eslint .
+```
+
+`TIMING=1` prints the ten rules with the highest aggregate execution time after a
+normal lint run. Set `TIMING=all` to display every rule. Treat the percentages as
+directional: type-aware rules often share the one-time cost of creating a
+TypeScript program, so one cold run does not prove that the highest-ranked rule is
+the root cause.
+
+### Find slow files and collect granular stats
+
+```sh
+pnpm exec eslint . \
+  --stats \
+  --format json-with-metadata \
+  --output-file eslint-stats.json
+```
+
+The built-in `json-with-metadata` formatter preserves each file's `stats`,
+including parse, fix, and per-rule lint timings. Use the resulting JSON with a
+stats-aware analyzer or a small script to group by `filePath` and rule ID. Delete
+or gitignore the generated report; it can contain local paths and lint messages.
+
+### Profiling best practices
+
+1. Profile the same file set and command used by CI, without `--fix`.
+2. Run once to warm filesystem and TypeScript caches, then compare several runs.
+3. Disable ESLint's result cache while benchmarking; cached files have no useful
+   rule timings.
+4. Separate parse time from rule time. High parse time usually points to typed
+   linting or TypeScript project scope rather than an individual rule.
+5. Use Config Inspector on the slowest representative files to confirm which
+   presets and type-aware rules actually apply before changing configuration.
+6. Prefer narrowing ignores, file globs, or TypeScript project scope over disabling
+   correctness rules. Re-run the same baseline after every change.
+
+See ESLint's official documentation for [Config Inspector](https://eslint.org/docs/latest/use/configure/debug#use-the-config-inspector),
+[rule profiling](https://eslint.org/docs/latest/extend/custom-rules#profile-rule-performance),
+and [stats data](https://eslint.org/docs/latest/extend/stats).
+
 ---
 
 ## What's included
