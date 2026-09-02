@@ -10,9 +10,20 @@ Version 2 requires ESLint >=9, Prettier >=3, and the TypeScript 6 JavaScript API
 TypeScript 5 is not supported. npm latest is stable 2.0.0 at this audit; canary
 builds are moving prereleases. See the README installation command.
 
+## Diagnostics
+
+The package uses ESLint v9+ flat config and needs no extra dependency for the
+built-in Config Inspector. From a consuming project, inspect one file with
+`pnpm exec eslint --inspect-config path/to/file.ts`, profile aggregate rule time
+with `TIMING=1 pnpm exec eslint .`, or capture per-file parse and rule timings
+with `pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json`.
+The inspector explains the effective config but does not measure performance.
+See [Inspecting and profiling ESLint](README.md#inspecting-and-profiling-eslint)
+for interpretation and benchmarking practices.
+
 ## Docs
 
-- [README](README.md): Project overview, presets, installation, and usage guide
+- [README](README.md): Project overview, presets, installation, diagnostics, and usage guide
 - [Contributing](CONTRIBUTING.md): Contribution guidelines and development setup
 - [Changelog](CHANGELOG.md): Version history and release notes
 - [Agents](AGENTS.md): AI agent instructions for working with this codebase
