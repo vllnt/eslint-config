@@ -43,7 +43,10 @@ import { nextjs } from "@vllnt/eslint-config/nextjs";
 export default [...nextjs];
 ```
 
-Each preset is an array — spread it into your flat config. All presets include `projectService: true` for type-aware linting.
+Each preset is an array — spread it into your flat config. Base and its React,
+Next.js, and Node.js variants enable `projectService: true` for type-aware linting.
+Convex also enables it; Turbo and Boundaries are opt-in additions, not replacements
+for a language preset.
 
 ## Presets
 
@@ -87,7 +90,7 @@ export default [
 
 ## What's included
 
-### Base (all presets)
+### Base (also included by React, Next.js, and Node.js)
 
 | Plugin                                                                                            | What it does                                 |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------- |
@@ -237,6 +240,20 @@ Add to `.vscode/settings.json` for monorepo support:
   "eslint.workingDirectories": ["./apps/your-app", "./packages/your-package"]
 }
 ```
+
+## Documentation and support
+
+- [LLM index](llms.txt) · [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
+- [Security policy and private vulnerability reporting](SECURITY.md)
+
+npm `latest` is stable `2.0.0` at this audit. `@canary` selects moving prerelease
+builds; pin and test them before adoption.
+
+## Author
+
+Built by [bntvllnt](https://github.com/bntvllnt) · [bntvllnt.com](https://bntvllnt.com).
+Part of [@vllnt](https://github.com/vllnt). [Sponsor the work](https://github.com/sponsors/bntvllnt).
 
 ## License
 

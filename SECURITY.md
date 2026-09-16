@@ -2,10 +2,11 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-|---------|--------------------|
-| 1.x     | Yes                |
-| < 1.0   | No                 |
+The current stable release line is 2.x (`2.0.0` on npm `latest` at this audit).
+Use the current stable release when reproducing a report. Canary builds are
+prereleases, not a separate long-term support line. This policy does not promise
+backports or a maintenance window for older majors; contact the maintainers if
+you need a fix on an older version.
 
 ## Reporting a Vulnerability
 
@@ -20,6 +21,7 @@
 ### Alternative: X / Twitter DM
 
 Send a direct message to [@bntvllnt](https://bntvllnt.com/x) with:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Impact assessment
