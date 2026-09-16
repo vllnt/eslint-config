@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Changed
 
+- Correct README preset guidance and security release-line documentation; remove
+  `llms-full.txt` and retain `llms.txt` as the maintained LLM documentation index.
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
 
 ## [2.0.0] - 2026-08-31
