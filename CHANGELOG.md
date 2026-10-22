@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Changed
 
+- Test on Node 22 and 24 in CI instead of end-of-life Node 20. `engines.node` is unchanged.
 - Correct README preset guidance and security release-line documentation; remove
   `llms-full.txt` and retain `llms.txt` as the maintained LLM documentation index.
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
