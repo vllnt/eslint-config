@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Changed
 
+- Upgrade dependencies: `typescript-eslint` 8.72.0, `@next/eslint-plugin-next` 16.4.3,
+  `eslint-plugin-functional` 10.0.1, `eslint-plugin-perfectionist` 5.13.0,
+  `eslint-plugin-prettier` 5.5.7, `eslint-plugin-turbo` 2.11.10,
+  `eslint-plugin-simple-import-sort` 14.0.0 and `@convex-dev/eslint-plugin` 5.0.0;
+  refresh the lockfile. The `typescript-eslint` upgrade enables two more strict
+  rules at error level: `@typescript-eslint/no-generated-empty-object-type` and
+  `@typescript-eslint/no-unsafe-enum-assignment`. Peer dependency ranges are
+  unchanged; `eslint` and `@eslint/js` stay on 9.
+
 - Run the org leak gate on pull requests and pushes to main to block secrets and private references.
 
 - Test on the patched Node 22.23.4 and 24.22.1 in CI instead of end-of-life Node 20, and publish with Node 24.22.1 from `.node-version` (October 2026 security release). `engines.node` is unchanged.
