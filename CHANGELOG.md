@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Changed
 
+- Run the org leak gate on pull requests and pushes to main to block secrets and private references.
+
 - Test on the patched Node 22.23.4 and 24.22.1 in CI instead of end-of-life Node 20, and publish with Node 24.22.1 from `.node-version` (October 2026 security release). `engines.node` is unchanged.
 - Correct README preset guidance and security release-line documentation; remove
   `llms-full.txt` and retain `llms.txt` as the maintained LLM documentation index.
