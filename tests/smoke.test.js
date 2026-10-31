@@ -5,6 +5,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ESLint } from "eslint";
+import { builtinRules } from "eslint/use-at-your-own-risk";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FLAT_DIR = join(__dirname, "..", "flat");
@@ -225,3 +226,36 @@ function collectFiles(dir) {
   }
   return results;
 }
+
+describe("rules: every configured rule id resolves to a registered rule", () => {
+  // An unknown rule id makes ESLint throw "Definition for rule ... not found" in consumers.
+  for (const { subpath, name } of PRESETS) {
+    it(`${subpath} rule ids resolve`, async () => {
+      const file = subpath === "." ? "index" : subpath.slice(2);
+      const mod = await import(`../flat/${file}.js`);
+      const plugins = {};
+      for (const entry of mod[name]) Object.assign(plugins, entry.plugins);
+      const unresolved = [];
+      for (const entry of mod[name]) {
+        for (const id of Object.keys(entry.rules ?? {})) {
+          const owner = Object.keys(plugins)
+            .filter((key) => id.startsWith(`${key}/`))
+            .sort((a, b) => b.length - a.length)[0];
+          const found = owner
+            ? plugins[owner].rules?.[id.slice(owner.length + 1)]
+            : builtinRules.has(id);
+          if (!found) unresolved.push(id);
+        }
+      }
+      assert.deepEqual(unresolved, []);
+    });
+  }
+});
+
+describe("types: every preset type-checks for TypeScript consumers", () => {
+  it("strict nodenext consumer importing every subpath compiles", () => {
+    const tsc = join(__dirname, "..", "node_modules", ".bin", "tsc");
+    const project = join(__dirname, "fixtures", "types", "tsconfig.json");
+    execFileSync(tsc, ["-p", project], { encoding: "utf8", stdio: "pipe" });
+  });
+});

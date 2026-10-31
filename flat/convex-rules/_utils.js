@@ -59,7 +59,8 @@ export function getBasenameNoExt(filePath) {
  * @returns {string}
  */
 export function getFilename(context) {
-  return context.physicalFilename ?? context.filename ?? ''
+  // ESLint reports native separators; normalise so Windows paths match the same checks.
+  return (context.physicalFilename ?? context.filename ?? '').replaceAll('\\', '/')
 }
 
 /**

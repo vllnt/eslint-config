@@ -4,14 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [2.1.0] - Unreleased
+
+### Added
+
+- TypeScript declarations for every preset entry point, so TypeScript consumers no longer get TS7016 on `import { nextjs } from "@vllnt/eslint-config"` or the subpath imports under `strict`. A type-check test covers every export.
+
+### Fixed
+
+- Convex custom rules (`standard-filenames`, `namespace-separation`, `snake-case-filenames`, `no-bare-v-any`) now normalise Windows path separators, so `queries.ts`-style files are no longer reported as misplaced on Windows.
 
 ### Changed
 
 - Upgrade dependencies: `typescript-eslint` 8.72.0, `@next/eslint-plugin-next` 16.4.3,
   `eslint-plugin-functional` 10.0.1, `eslint-plugin-perfectionist` 5.13.0,
   `eslint-plugin-prettier` 5.5.7, `eslint-plugin-turbo` 2.11.10,
-  `eslint-plugin-simple-import-sort` 14.0.0 and `@convex-dev/eslint-plugin` 5.0.0;
+  `eslint-plugin-simple-import-sort` 14.0.0, `eslint-plugin-unicorn` 65.0.1 and `@convex-dev/eslint-plugin` 5.0.0;
   refresh the lockfile. The `typescript-eslint` upgrade enables two more strict
   rules at error level: `@typescript-eslint/no-generated-empty-object-type` and
   `@typescript-eslint/no-unsafe-enum-assignment`. Peer dependency ranges are
@@ -23,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Correct README preset guidance and security release-line documentation; remove
   `llms-full.txt` and retain `llms.txt` as the maintained LLM documentation index.
 - Publish `@latest` only from a pushed `vX.Y.Z` tag on `main` (version and changelog entry must match) instead of on every version change; pin workflow actions to commit SHAs, use least-privilege permissions, and enforce pnpm 10 install policies (minimum release age, blocked install scripts).
+- Test every custom Convex rule and assert that every configured rule id resolves to a registered rule in each preset, so a plugin upgrade that removes a rule fails CI instead of crashing consumers.
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
 
 ## [2.0.0] - 2026-08-31
@@ -62,7 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Add `pnpm.overrides` for `handlebars` (pinned by upstream `@boundaries/elements`)
 - Refresh lockfile to resolve minimatch, picomatch, flatted, brace-expansion to patched versions
 
-## [1.0.0] - 2026-03-14
+## [1.0.0] - 2026-03-05
 
 ### Added
 
@@ -74,6 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Smoke tests with 43 assertions
 - CI/CD with GitHub Actions (test + canary publish + release)
 
+[2.1.0]: https://github.com/vllnt/eslint-config/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/vllnt/eslint-config/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/vllnt/eslint-config/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/vllnt/eslint-config/releases/tag/v1.0.0
