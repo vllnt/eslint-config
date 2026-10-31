@@ -136,7 +136,8 @@ or gitignore the generated report; it can contain local paths and lint messages.
 ### Profiling best practices
 
 1. Profile the same file set and command used by CI, without `--fix`.
-2. Run once to warm filesystem and TypeScript caches, then compare several runs.
+2. Run once to warm the operating system's file cache, then compare several runs.
+   Each CLI run is a fresh process, so TypeScript program setup is part of every timing.
 3. Disable ESLint's result cache while benchmarking; cached files have no useful
    rule timings.
 4. Separate parse time from rule time. High parse time usually points to typed
