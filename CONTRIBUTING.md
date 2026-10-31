@@ -27,6 +27,7 @@ flat/           ← shipped code (included in npm tarball)
   core/               ← shared config fragments
 tests/
   smoke.test.js ← export/shape/hygiene tests (node:test)
+  convex-rules.test.js ← custom Convex rule tests (RuleTester)
 ```
 
 ### Adding a New Preset
