@@ -13,8 +13,9 @@ builds are moving prereleases. See the README installation command.
 ## Diagnostics
 
 The package uses ESLint v9+ flat config and needs no extra dependency for the
-built-in Config Inspector. From a consuming project, inspect one file with
-`pnpm exec eslint --inspect-config path/to/file.ts`, profile aggregate rule time
+built-in Config Inspector. From a consuming project, open the inspector with
+`pnpm exec eslint --inspect-config` (it downloads on demand and takes no file
+argument; pick files in its UI), profile aggregate rule time
 with `TIMING=1 pnpm exec eslint .`, or capture per-file parse and rule timings
 with `pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json`.
 The inspector explains the effective config but does not measure performance.

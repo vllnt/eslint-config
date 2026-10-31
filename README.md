@@ -95,12 +95,13 @@ inspector dependency is required.
 ### Inspect the effective configuration
 
 ```sh
-pnpm exec eslint --inspect-config src/example.ts
+pnpm exec eslint --inspect-config
 ```
 
-ESLint installs and launches its Config Inspector, scoped to the supplied file.
-Use it to see which config objects match, where a rule was defined, and the final
-rule options. Inspect representative files from each environment (for example,
+ESLint downloads on demand (via `npx`) and launches the Config Inspector for the
+project's config file; it takes no file argument. Use its file-matching view to see
+which config objects match a path, where a rule was defined, and the final rule
+options. Check representative files from each environment (for example,
 application code, tests, generated code, and Convex code) because flat config is
 resolved per file.
 
