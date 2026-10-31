@@ -251,3 +251,11 @@ describe("rules: every configured rule id resolves to a registered rule", () => 
     });
   }
 });
+
+describe("types: every preset type-checks for TypeScript consumers", () => {
+  it("strict nodenext consumer importing every subpath compiles", () => {
+    const tsc = join(__dirname, "..", "node_modules", ".bin", "tsc");
+    const project = join(__dirname, "fixtures", "types", "tsconfig.json");
+    execFileSync(tsc, ["-p", project], { encoding: "utf8", stdio: "pipe" });
+  });
+});

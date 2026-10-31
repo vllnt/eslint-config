@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [2.1.0] - Unreleased
 
+### Added
+
+- TypeScript declarations for every preset entry point, so TypeScript consumers no longer get TS7016 on `import { nextjs } from "@vllnt/eslint-config"` or the subpath imports under `strict`. A type-check test covers every export.
+
 ### Fixed
 
 - Convex custom rules (`standard-filenames`, `namespace-separation`, `snake-case-filenames`, `no-bare-v-any`) now normalise Windows path separators, so `queries.ts`-style files are no longer reported as misplaced on Windows.
