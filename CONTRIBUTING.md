@@ -51,6 +51,15 @@ tests/
 - Keep PRs focused — one change per PR
 - All tests must pass: `pnpm test`
 
+## Releases
+
+Maintainers only. Every publish runs in `.github/workflows/publish.yml` with npm trusted
+publishing and provenance; nothing is published from a local machine.
+
+- Canary (`@canary`): every push to `main` publishes one; a manual run on `main` also works.
+- Stable (`@latest`): merge a PR that sets `package.json` `version` and adds a matching
+  `## [X.Y.Z]` entry to `CHANGELOG.md`, then push the tag `vX.Y.Z` on that `main` commit.
+
 ## Reporting Issues
 
 Open a [GitHub issue](https://github.com/vllnt/eslint-config/issues). Include:
