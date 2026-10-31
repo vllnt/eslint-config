@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Test on the patched Node 22.23.4 and 24.22.1 in CI instead of end-of-life Node 20, and publish with Node 24.22.1 from `.node-version` (October 2026 security release). `engines.node` is unchanged.
 - Correct README preset guidance and security release-line documentation; remove
   `llms-full.txt` and retain `llms.txt` as the maintained LLM documentation index.
+- Publish `@latest` only from a pushed `vX.Y.Z` tag on `main` (version and changelog entry must match) instead of on every version change; pin workflow actions to commit SHAs, use least-privilege permissions, and enforce pnpm 10 install policies (minimum release age, blocked install scripts).
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
 
 ## [2.0.0] - 2026-08-31

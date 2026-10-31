@@ -20,7 +20,7 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.28.2",
+  "packageManager": "pnpm@10.34.8",
   "files": [
     "flat"
   ],
@@ -36,7 +36,6 @@
   },
   "scripts": {
     "test": "pnpm check:agents && node --test tests/smoke.test.js",
-    "prepublishOnly": "node --test tests/smoke.test.js",
     "check:agents": "node -e \"const f=require('node:fs');if(!f.existsSync('AGENTS.md')||f.existsSync('CLAUDE.md')||f.existsSync('.claude'))process.exit(1)\""
   },
   "dependencies": {
@@ -79,6 +78,13 @@
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "pnpm": {
+    "minimumReleaseAge": 10080,
+    "minimumReleaseAgeExclude": [
+      "@vllnt/*"
+    ],
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ],
     "overrides": {
       "handlebars": ">=4.7.9",
       "deepmerge-ts@<8.0.0": "^8.0.2"

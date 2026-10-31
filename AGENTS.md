@@ -51,6 +51,10 @@ tests/
 
 ## Publishing
 
-Push to main auto-detects new versions. If package.json version has no git tag,
-CI creates the tag, publishes to npm, and creates a GitHub Release with notes
-from CHANGELOG.md. Non-release pushes publish a canary version.
+Nothing is published from a local machine. `.github/workflows/publish.yml` uses npm
+trusted publishing (OIDC) with provenance and holds no npm token.
+
+- Canary (`@canary`): every push to `main`, or a manual run on `main`.
+- Stable (`@latest`): only a pushed `vX.Y.Z` tag on a `main` commit whose `package.json`
+  version is `X.Y.Z` and whose `CHANGELOG.md` has a `## [X.Y.Z]` entry. Merging to `main`
+  never publishes `@latest`.
