@@ -15,6 +15,10 @@ tester.run("standard-filenames", rules["standard-filenames"], {
     { code: query("returns: 1"), filename: "C:\\app\\convex\\queries.ts" },
     { code: "export const a = 1;", filename: at("helpers.ts") },
     { code: "export function a() {}", filename: at("helpers.ts") },
+    {
+      code: "export const a = internalAction({});",
+      filename: at("node_actions.ts"),
+    },
   ],
   invalid: [
     {
@@ -33,6 +37,10 @@ tester.run("namespace-separation", rules["namespace-separation"], {
       filename: at("internal_mutations.ts"),
     },
     { code: "export const a = action({});", filename: at("actions.ts") },
+    {
+      code: "export const a = internalAction({});",
+      filename: at("node_actions.ts"),
+    },
     { code: "export const a = other({});", filename: at("misc.ts") },
     { code: "export function a() {}", filename: at("misc.ts") },
   ],
@@ -45,6 +53,11 @@ tester.run("namespace-separation", rules["namespace-separation"], {
     {
       code: "export const a = internalAction({});",
       filename: at("mutations.ts"),
+      errors: [{ messageId: "wrongNamespace" }],
+    },
+    {
+      code: "export const a = mutation({});",
+      filename: at("node_actions.ts"),
       errors: [{ messageId: "wrongNamespace" }],
     },
   ],

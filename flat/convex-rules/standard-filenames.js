@@ -17,11 +17,11 @@ const rule = {
     type: 'problem',
     docs: {
       description:
-        'Convex factory exports must be in standard-named files (queries.ts, mutations.ts, actions.ts, internal_mutations.ts)',
+        'Convex factory exports must be in standard-named files (queries.ts, mutations.ts, actions.ts, internal_mutations.ts, node_actions.ts)',
     },
     messages: {
       wrongFilename:
-        'Convex {{factoryType}}() exports must be in a standard-named file (queries.ts, mutations.ts, actions.ts, or internal_mutations.ts). Found in "{{filename}}".',
+        'Convex {{factoryType}}() exports must be in a standard-named file (queries.ts, mutations.ts, actions.ts, internal_mutations.ts, or node_actions.ts). Found in "{{filename}}".',
     },
     schema: [],
   },

@@ -3,7 +3,7 @@
  * Enforces that Convex factory functions only appear in their designated files:
  *   - query / internalQuery -> queries.ts
  *   - mutation / internalMutation -> mutations.ts or internal_mutations.ts
- *   - action / internalAction -> actions.ts
+ *   - action / internalAction -> actions.ts or node_actions.ts
  */
 
 import { getConvexFactory, getBasename, getFilename } from './_utils.js'
@@ -29,8 +29,8 @@ function getAllowedFile(factoryType) {
     case 'action':
     case 'internalAction':
       return {
-        expectedFile: 'actions.ts',
-        isAllowed: (b) => b === 'actions.ts',
+        expectedFile: 'actions.ts or node_actions.ts',
+        isAllowed: (b) => b === 'actions.ts' || b === 'node_actions.ts',
       }
     default:
       return null
