@@ -209,6 +209,7 @@ convex/
     queries.ts              query(), internalQuery()
     mutations.ts            mutation(), internalMutation()
     actions.ts              action(), internalAction()
+    node_actions.ts         action(), internalAction() in the Node.js runtime ("use node")
     internal_mutations.ts   internalMutation() (optional split)
     validators.ts           v.* validators + types
     schema.ts               table definitions

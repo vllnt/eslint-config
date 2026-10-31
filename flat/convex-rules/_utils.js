@@ -18,6 +18,7 @@ export const STANDARD_CONVEX_FILENAMES = new Set([
   'mutations.ts',
   'actions.ts',
   'internal_mutations.ts',
+  'node_actions.ts',
 ])
 
 /**

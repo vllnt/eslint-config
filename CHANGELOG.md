@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
+- Convex `standard-filenames` and `namespace-separation` now accept `node_actions.ts` for actions that run in the Node.js runtime.
 - Convex custom rules (`standard-filenames`, `namespace-separation`, `snake-case-filenames`, `no-bare-v-any`) now normalise Windows path separators, so `queries.ts`-style files are no longer reported as misplaced on Windows.
 
 ### Changed
