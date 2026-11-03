@@ -162,7 +162,6 @@ and [stats data](https://eslint.org/docs/latest/extend/stats).
 | [@eslint/js](https://eslint.org/docs/latest/rules/)                                               | ESLint recommended rules                     |
 | [typescript-eslint](https://typescript-eslint.io/)                                                | `strictTypeChecked` + `stylisticTypeChecked` |
 | [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier)                      | Prettier as ESLint errors                    |
-| [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier)                      | Disables conflicting rules                   |
 | [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Import/object/type sorting                   |
 | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                    | Modern JS best practices                     |
 | [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort)    | Import ordering                              |
