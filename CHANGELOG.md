@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Test every custom Convex rule and assert that every configured rule id resolves to a registered rule in each preset, so a plugin upgrade that removes a rule fails CI instead of crashing consumers.
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
 - Document ESLint Config Inspector, aggregate rule timing, granular per-file stats, and repeatable profiling practices.
+- Require agents to verify inherited rules against the lockfile-pinned plugin version and the composed preset source in `AGENTS.md`.
 
 ## [2.0.0] - 2026-08-31
 
