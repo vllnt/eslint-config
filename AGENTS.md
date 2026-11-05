@@ -49,6 +49,7 @@ tests/
 - No TypeScript source — all shipped code is plain JS
 - `peerDependencies` for eslint, prettier, typescript
 - `dependencies` for all plugins (consumers don't install them separately)
+- Before claiming a rule or behavior is inherited from a plugin or composed preset, inspect the lockfile-pinned plugin version (`pnpm-lock.yaml`) and the composed preset source in `flat/`; never assume docs or peer majors match what is loaded
 
 ## Publishing
 
