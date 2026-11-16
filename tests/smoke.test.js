@@ -19,6 +19,7 @@ const PRESETS = [
   { subpath: "./turbo", name: "turbo" },
   { subpath: "./boundaries", name: "boundaries" },
   { subpath: "./playwright", name: "playwright", overlay: true },
+  { subpath: "./ignores", name: "ignores" },
 ];
 
 describe("exports: all presets resolve as non-empty arrays", () => {
@@ -198,6 +199,7 @@ describe("package.json: required fields", () => {
       "./turbo",
       "./boundaries",
       "./playwright",
+      "./ignores",
     ];
     for (const exp of expected) {
       assert.ok(pkg.exports[exp], `missing export "${exp}"`);

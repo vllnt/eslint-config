@@ -24,6 +24,12 @@ const routeFunctionPattern = [...HTTP_METHODS, 'generateStaticParams'].join('|')
 const routeExportMessage = `Only the HTTP method handlers (${HTTP_METHODS.join(', ')}) and generateStaticParams may be exported as functions from route.ts`
 
 export const nextjs = tseslint.config(
+  {
+    // Next.js build output and generated files, as `create-next-app` ignores them.
+    // Generic names match only at the config root so a source folder called
+    // `build` or `out` deeper in the tree stays linted.
+    ignores: ['**/.next/**', '**/next-env.d.ts', 'build/**', 'out/**'],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,

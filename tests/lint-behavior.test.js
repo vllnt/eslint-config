@@ -196,3 +196,65 @@ describe("playwright: relaxes only what Playwright idioms need", () => {
     assertRules(withNextjs, "fail/tests/e2e/snake-variable.spec.ts", [NAMING]);
   });
 });
+
+describe("ignores: build output is ignored, same-named source folders are not", () => {
+  async function ignoredPaths(names, paths) {
+    const eslint = new ESLint({
+      cwd: LINT_DIR,
+      overrideConfigFile: true,
+      overrideConfig: await compose(...names),
+    });
+    const flags = await Promise.all(
+      paths.map((path) => eslint.isPathIgnored(join(LINT_DIR, path))),
+    );
+    return Object.fromEntries(paths.map((path, index) => [path, flags[index]]));
+  }
+
+  it("nextjs ignores Next.js output and generated files at any depth", async () => {
+    const paths = [
+      ".next/server/app.js",
+      "apps/web/.next/server/app.js",
+      "next-env.d.ts",
+      "apps/web/next-env.d.ts",
+      "build/server.js",
+      "out/index.js",
+    ];
+    assert.deepEqual(
+      await ignoredPaths(["nextjs"], paths),
+      Object.fromEntries(paths.map((path) => [path, true])),
+    );
+  });
+
+  it("nextjs keeps linting source folders named build or out", async () => {
+    const paths = ["src/build/index.ts", "src/out/index.ts", "app/page.tsx"];
+    assert.deepEqual(
+      await ignoredPaths(["nextjs"], paths),
+      Object.fromEntries(paths.map((path) => [path, false])),
+    );
+  });
+
+  it("ignores export covers shared tool output (composed after base)", async () => {
+    const paths = [
+      "coverage/lcov.js",
+      "packages/a/coverage/lcov.js",
+      "playwright-report/index.js",
+      "test-results/a.js",
+      ".turbo/cache.js",
+      ".worktrees/branch/src/a.ts",
+      "dist/index.js",
+      "build/index.js",
+    ];
+    assert.deepEqual(
+      await ignoredPaths(["base", "ignores"], paths),
+      Object.fromEntries(paths.map((path) => [path, true])),
+    );
+  });
+
+  it("ignores export keeps linting source folders named dist or build", async () => {
+    const paths = ["src/dist/index.ts", "src/build/index.ts", "src/index.ts"];
+    assert.deepEqual(
+      await ignoredPaths(["base", "ignores"], paths),
+      Object.fromEntries(paths.map((path) => [path, false])),
+    );
+  });
+});

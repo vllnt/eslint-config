@@ -3,6 +3,7 @@ import {
   base,
   boundaries,
   convex,
+  ignores,
   nextjs,
   nodejs,
   playwright,
@@ -12,6 +13,7 @@ import {
 import boundariesDefault from "@vllnt/eslint-config/boundaries";
 import convexDefault from "@vllnt/eslint-config/convex";
 import nextjsDefault from "@vllnt/eslint-config/nextjs";
+import ignoresDefault from "@vllnt/eslint-config/ignores";
 import nodejsDefault from "@vllnt/eslint-config/nodejs";
 import playwrightDefault from "@vllnt/eslint-config/playwright";
 import reactDefault from "@vllnt/eslint-config/react";
@@ -21,6 +23,7 @@ const config: Linter.Config[] = [
   ...base,
   ...boundaries,
   ...convex,
+  ...ignores,
   ...nextjs,
   ...nodejs,
   ...playwright,
@@ -28,6 +31,7 @@ const config: Linter.Config[] = [
   ...turbo,
   ...boundariesDefault,
   ...convexDefault,
+  ...ignoresDefault,
   ...nextjsDefault,
   ...nodejsDefault,
   ...playwrightDefault,
