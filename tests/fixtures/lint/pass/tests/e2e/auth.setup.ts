@@ -1,0 +1,36 @@
+import { test as setup } from "@playwright/test";
+
+setup("walk the sign-in flow", async ({ page }) => {
+  await page.goto("/step-1");
+  await page.goto("/step-2");
+  await page.goto("/step-3");
+  await page.goto("/step-4");
+  await page.goto("/step-5");
+  await page.goto("/step-6");
+  await page.goto("/step-7");
+  await page.goto("/step-8");
+  await page.goto("/step-9");
+  await page.goto("/step-10");
+  await page.goto("/step-11");
+  await page.goto("/step-12");
+  await page.goto("/step-13");
+  await page.goto("/step-14");
+  await page.goto("/step-15");
+  await page.goto("/step-16");
+  await page.goto("/step-17");
+  await page.goto("/step-18");
+  await page.goto("/step-19");
+  await page.goto("/step-20");
+  await page.goto("/step-21");
+  await page.goto("/step-22");
+  await page.goto("/step-23");
+  await page.goto("/step-24");
+  await page.goto("/step-25");
+  await page.goto("/step-26");
+  await page.goto("/step-27");
+  await page.goto("/step-28");
+  await page.goto("/step-29");
+  await page.goto("/step-30");
+  await page.goto("/step-31");
+  await page.goto("/step-32");
+});

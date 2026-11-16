@@ -17,6 +17,7 @@ const LINT_DIR = join(
 const NAMING = "@typescript-eslint/naming-convention";
 const RESTRICTED = "no-restricted-syntax";
 const LOOPS = "functional/no-loop-statements";
+const MAX_LINES = "max-lines-per-function";
 
 async function compose(...names) {
   const parts = [];
@@ -123,4 +124,75 @@ describe("base: keys that require quotes are accepted, other keys are not", () =
       assertRules(results, "fail/lib/snake-key.ts", [NAMING]);
     });
   }
+});
+
+describe("playwright: relaxes only what Playwright idioms need", () => {
+  const E2E_PASS = [
+    "pass/tests/e2e/viewports.spec.ts",
+    "pass/tests/e2e/auth.setup.ts",
+    "pass/e2e/smoke.spec.ts",
+    "pass/playwright.config.ts",
+    "pass/mts/playwright.config.mts",
+  ];
+  const PATTERNS = [
+    "pass/tests/**/*.ts",
+    "pass/e2e/*.ts",
+    "pass/*.ts",
+    "pass/mts/*.mts",
+    "fail/tests/**/*.ts",
+    "fail/app/helpers/*.ts",
+  ];
+  let withNextjs;
+  let withBase;
+  let control;
+  before(async () => {
+    withNextjs = await lintFixtures(["nextjs", "playwright"], PATTERNS);
+    withBase = await lintFixtures(["base", "playwright"], PATTERNS);
+    control = await lintFixtures(["nextjs"], PATTERNS);
+  });
+
+  for (const file of E2E_PASS) {
+    it(`${file} lints clean after nextjs`, () => {
+      assertClean(withNextjs, file);
+    });
+    it(`${file} lints clean after base`, () => {
+      assertClean(withBase, file);
+    });
+  }
+
+  it("control: without the preset the same files fail on exactly the relaxed rules", () => {
+    assertRules(control, "pass/tests/e2e/viewports.spec.ts", [LOOPS, NAMING]);
+    assertRules(control, "pass/tests/e2e/auth.setup.ts", [MAX_LINES]);
+    assertRules(control, "pass/e2e/smoke.spec.ts", [LOOPS]);
+    assertRules(control, "pass/playwright.config.ts", [LOOPS]);
+    assertRules(control, "pass/mts/playwright.config.mts", [LOOPS]);
+  });
+
+  it("still errors on a loop in a non-test file under app/", () => {
+    assertRules(withNextjs, "fail/app/helpers/loop.ts", [LOOPS]);
+  });
+
+  it("still errors on a loop in an e2e helper that is not a spec or setup file", () => {
+    assertRules(withNextjs, "fail/tests/e2e/helper.ts", [LOOPS]);
+  });
+
+  it("still errors on a long function in an e2e helper", () => {
+    assertRules(withNextjs, "fail/tests/e2e/long-helper.ts", [MAX_LINES]);
+  });
+
+  it("does not relax write-good-comments", () => {
+    assertRules(withNextjs, "fail/tests/e2e/comment.spec.ts", [
+      "write-good-comments/write-good-comments",
+    ]);
+  });
+
+  it("does not relax unicorn/prevent-abbreviations", () => {
+    assertRules(withNextjs, "fail/tests/e2e/abbreviation.spec.ts", [
+      "unicorn/prevent-abbreviations",
+    ]);
+  });
+
+  it("still checks variable names (only object keys are relaxed)", () => {
+    assertRules(withNextjs, "fail/tests/e2e/snake-variable.spec.ts", [NAMING]);
+  });
 });

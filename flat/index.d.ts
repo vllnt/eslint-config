@@ -5,3 +5,4 @@ export { react } from "./react.js";
 export { base } from "./base.js";
 export { turbo } from "./turbo.js";
 export { boundaries } from "./boundaries.js";
+export { playwright } from "./playwright.js";
