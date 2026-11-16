@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - Unreleased
+## [2.1.0] - 2026-11-16
 
 ### Added
 
@@ -33,6 +33,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
   rules at error level: `@typescript-eslint/no-generated-empty-object-type` and
   `@typescript-eslint/no-unsafe-enum-assignment`. Peer dependency ranges are
   unchanged; `eslint` and `@eslint/js` stay on 9.
+  The `eslint-plugin-unicorn` upgrade (62 to 65) can report errors on code that passed
+  2.0.0; `eslint --fix` fixes both cases seen in vllnt consumers:
+  `unicorn/numeric-separators-style` now checks the digits after the decimal point
+  (`0.040_45` becomes `0.04045`), and `unicorn/prefer-set-has` flags more constant
+  arrays that are only used for membership checks (`['ui', 'dig'].includes(slug)`
+  becomes a `Set` with `.has()`).
 
 - Run the org leak gate on pull requests and pushes to main to block secrets and private references.
 

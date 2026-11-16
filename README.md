@@ -372,7 +372,7 @@ Add to `.vscode/settings.json` for monorepo support:
 - [Contributing](CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
 - [Security policy and private vulnerability reporting](SECURITY.md)
 
-npm `latest` is stable `2.0.0` at this audit. `@canary` selects moving prerelease
+npm `latest` is stable `2.1.0` at this audit. `@canary` selects moving prerelease
 builds; pin and test them before adoption.
 
 ## Author
