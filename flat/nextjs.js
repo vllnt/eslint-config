@@ -78,7 +78,9 @@ export const nextjs = tseslint.config(
   {
     // Route handlers are named after the HTTP method, so accept exactly those
     // exported function names; every other name keeps the base convention.
-    files: ['**/app/**/route.{js,jsx,ts,tsx}'],
+    // Not `.tsx`: `typescriptTsx` already accepts PascalCase functions there
+    // (so `GET` passes), and a rule here would replace it, not add to it.
+    files: ['**/app/**/route.{js,jsx,ts}'],
     rules: {
       '@typescript-eslint/naming-convention': [
         'error',
@@ -95,6 +97,7 @@ export const nextjs = tseslint.config(
   {
     files: ['**/app/api/**/route.{js,jsx,ts,tsx}'],
     rules: {
+      '@typescript-eslint/naming-convention': 'off',
       'no-restricted-syntax': [
         'error',
         {

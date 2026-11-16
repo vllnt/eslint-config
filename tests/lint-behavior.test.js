@@ -69,7 +69,11 @@ describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
   before(async () => {
     results = await lintFixtures(
       ["nextjs"],
-      ["pass/app/**/*.ts", "fail/app/**/route.ts", "fail/app/not-a-route/*.ts"],
+      [
+        "pass/app/**/*.{ts,tsx}",
+        "fail/app/**/route.{ts,tsx}",
+        "fail/app/not-a-route/*.ts",
+      ],
     );
   });
 
@@ -79,6 +83,14 @@ describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
 
   it("route outside app/api: GET and quoted header keys", () => {
     assertClean(results, "pass/app/robots.txt/route.ts");
+  });
+
+  it("route.tsx keeps the .tsx naming rule: a PascalCase JSX helper and GET pass", () => {
+    assertClean(results, "pass/app/og/route.tsx");
+  });
+
+  it("route.tsx still rejects a snake_case function", () => {
+    assertRules(results, "fail/app/og-snake/route.tsx", [NAMING]);
   });
 
   it("rejects an uppercase export that is not an HTTP method (FETCH)", () => {
@@ -97,11 +109,16 @@ describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
     assertRules(results, "fail/app/not-a-route/handlers.ts", [NAMING]);
   });
 
-  it("app/api route: FETCH fails the naming rule and the export allowlist", () => {
-    assertRules(results, "fail/app/api/fetch-export/route.ts", [
-      NAMING,
-      RESTRICTED,
-    ]);
+  it("app/api route: FETCH fails the export allowlist", () => {
+    assertRules(results, "fail/app/api/fetch-export/route.ts", [RESTRICTED]);
+  });
+
+  it("app/api route: the naming convention stays off, as before", () => {
+    assertClean(results, "pass/app/api/free-names/route.ts");
+  });
+
+  it("route outside app/api: the same names fail the naming convention", () => {
+    assertRules(results, "fail/app/free-names/route.ts", [NAMING]);
   });
 
   it("app/api route: a lowercase get export fails the export allowlist", () => {
@@ -110,6 +127,42 @@ describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
 
   it("keeps functional/no-loop-statements on for route handlers", () => {
     assertRules(results, "fail/app/loops/route.ts", [LOOPS]);
+  });
+});
+
+describe("nextjs: the method-name exemption covers the right route files", () => {
+  const exempted = (rule) =>
+    rule.some((option) => option?.filter?.regex?.includes("GET"));
+  let ruleFor;
+  before(async () => {
+    const eslint = new ESLint({
+      cwd: LINT_DIR,
+      overrideConfigFile: true,
+      overrideConfig: await compose("nextjs"),
+    });
+    ruleFor = async (file) =>
+      (await eslint.calculateConfigForFile(join(LINT_DIR, file))).rules[NAMING];
+  });
+
+  for (const file of [
+    "app/a/route.js",
+    "app/a/route.jsx",
+    "app/a/route.ts",
+    "app/a/nested/route.ts",
+  ]) {
+    it(`${file} gets the exemption`, async () => {
+      assert.ok(exempted(await ruleFor(file)));
+    });
+  }
+
+  it("route.tsx keeps the rule of every other .tsx file, which already accepts GET", async () => {
+    const rule = await ruleFor("app/a/route.tsx");
+    assert.ok(!exempted(rule));
+    assert.deepEqual(rule, await ruleFor("app/a/page.tsx"));
+  });
+
+  it("a non-route file gets no exemption", async () => {
+    assert.ok(!exempted(await ruleFor("app/a/handlers.ts")));
   });
 });
 
