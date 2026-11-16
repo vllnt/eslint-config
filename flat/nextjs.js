@@ -25,7 +25,7 @@ const routeExportMessage = `Only the HTTP method handlers (${HTTP_METHODS.join('
 
 export const nextjs = tseslint.config(
   {
-    // Next.js build output and generated files, as `create-next-app` ignores them.
+    // Next.js build output and generated files: the defaults of `eslint-config-next`.
     // Generic names match only at the config root so a source folder called
     // `build` or `out` deeper in the tree stays linted.
     ignores: ['**/.next/**', '**/next-env.d.ts', 'build/**', 'out/**'],
