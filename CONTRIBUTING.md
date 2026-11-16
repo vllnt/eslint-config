@@ -22,11 +22,14 @@ flat/           ← shipped code (included in npm tarball)
   convex.js     ← Convex preset
   turbo.js      ← Turborepo preset
   boundaries.js ← Architecture boundaries preset
+  playwright.js ← Playwright overlay preset (opt-in)
+  ignores.js    ← Shared ignores list
   convex-plugin.js    ← convex-rules ESLint plugin
   convex-rules/       ← 7 custom Convex lint rules
   core/               ← shared config fragments
 tests/
   smoke.test.js ← export/shape/hygiene tests (node:test)
+  lint-behavior.test.js ← real ESLint runs over tests/fixtures/lint (node:test)
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
 ```
 
@@ -37,6 +40,17 @@ tests/
 3. Add the export to `flat/index.js`
 4. Add the export path to `package.json` `exports` field
 5. Add tests in `tests/smoke.test.js`
+
+An overlay preset (opt-in, like Playwright) adjusts rules that a language preset
+registers, so it does not register plugins itself. Mark its entry `overlay: true` in
+`PRESETS` in `tests/smoke.test.js` so the rule-id check resolves plugins from `base`.
+
+### Changing What a Preset Allows
+
+Add a fixture under `tests/fixtures/lint/pass` that must lint clean and a near-miss under
+`tests/fixtures/lint/fail` that differs in one respect and must still fail, then assert
+both in `tests/lint-behavior.test.js`. Fixtures are linted with the real ESLint Node API,
+so paths such as `app/api/x/route.ts` matter.
 
 ### Adding a New Convex Rule
 

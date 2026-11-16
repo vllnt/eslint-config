@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Added
 
 - TypeScript declarations for every preset entry point, so TypeScript consumers no longer get TS7016 on `import { nextjs } from "@vllnt/eslint-config"` or the subpath imports under `strict`. A type-check test covers every export.
+- `@vllnt/eslint-config/playwright`, an opt-in overlay for `**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and `**/playwright.config.{ts,mts}`. It turns off `functional/no-loop-statements` and `max-lines-per-function` there and stops checking object literal key names in `@typescript-eslint/naming-convention`; every other rule, including `write-good-comments` and `unicorn/prevent-abbreviations`, stays on. Spread it after a language preset (`[...nextjs, ...playwright]`).
+- `@vllnt/eslint-config/ignores`, a shared list of tool output to ignore (`coverage/`, `playwright-report/`, `test-results/`, `.turbo/`, `.worktrees/` at any depth; `dist/` and `build/` at the config root), so repos stop copying and drifting from the same list (part of #16; the React Native entry and the formatter choice remain open).
+- Lint-behavior tests that run real ESLint over fixture files with the Node API, covering the Next.js route handler conventions, the Playwright overlay and the ignores, each with a clean fixture and a near-miss that must still fail (part of #4; the base, nodejs, react and convex presets still need their own lint runs).
 
 ### Fixed
 
@@ -16,6 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Convex custom rules (`standard-filenames`, `namespace-separation`, `snake-case-filenames`, `no-bare-v-any`) now normalise Windows path separators, so `queries.ts`-style files are no longer reported as misplaced on Windows.
 
 ### Changed
+
+- Next.js preset: route files (`app/**/route.{js,jsx,ts,tsx}`) accept `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE` and `OPTIONS` as exported function names through a narrow `@typescript-eslint/naming-convention` selector, so apps no longer turn the rule off for them. Any other name still follows the base convention, and `functional/no-loop-statements` stays on in route handlers.
+  - Behavior change under `app/api/**/route.*`: `@typescript-eslint/naming-convention` is no longer turned off there, so names other than the methods now follow the base convention (for example a `snake_case` local or a `PascalCase` constant). The exported-function allowlist also accepts `HEAD`, `PATCH`, `OPTIONS` and `generateStaticParams`, which it used to reject.
+- Every preset: object and type property names that need quotes (`'content-type'`, `'@type'`, `'x-default'`) are exempt from `@typescript-eslint/naming-convention`, because an external format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
+- Next.js preset: ignore `.next/`, `out/`, `build/` and `next-env.d.ts` by default, as Next.js does.
 
 - Upgrade dependencies: `typescript-eslint` 8.72.0, `@next/eslint-plugin-next` 16.4.3,
   `eslint-plugin-functional` 10.0.1, `eslint-plugin-perfectionist` 5.13.0,
