@@ -1,3 +1,60 @@
+export const namingConvention = [
+  {
+    selector: 'default',
+    format: ['camelCase'],
+    leadingUnderscore: 'allow',
+    trailingUnderscore: 'allow',
+  },
+  {
+    selector: 'import',
+    format: ['camelCase', 'PascalCase'],
+  },
+  {
+    selector: 'variable',
+    format: ['camelCase', 'UPPER_CASE'],
+    leadingUnderscore: 'allow',
+    trailingUnderscore: 'allow',
+  },
+  {
+    selector: ['variableLike'],
+    format: ['camelCase'],
+    leadingUnderscore: 'allow',
+    trailingUnderscore: 'allow',
+  },
+  {
+    selector: 'typeLike',
+    format: ['PascalCase'],
+    custom: {
+      regex: '^(I|T)[A-Z]',
+      match: false,
+    },
+  },
+  {
+    selector: 'typeParameter',
+    format: ['PascalCase'],
+    prefix: ['T'],
+  },
+  {
+    selector: 'enumMember',
+    format: ['camelCase', 'UPPER_CASE'],
+  },
+  {
+    selector: 'objectLiteralProperty',
+    format: null,
+    filter: {
+      regex: '^/',
+      match: true,
+    },
+  },
+  {
+    // Keys that need quotes (`content-type`, `@type`, `x-default`) come from an
+    // external format, so their spelling is not ours to rename.
+    selector: ['objectLiteralProperty', 'typeProperty'],
+    modifiers: ['requiresQuotes'],
+    format: null,
+  },
+]
+
 export const typescriptConfig = {
   rules: {
     'no-restricted-syntax': [
@@ -19,56 +76,7 @@ export const typescriptConfig = {
           'Use optional properties instead of unions with `undefined` (e.g. `email?: string`).',
       },
     ],
-    '@typescript-eslint/naming-convention': [
-      'error',
-      {
-        selector: 'default',
-        format: ['camelCase'],
-        leadingUnderscore: 'allow',
-        trailingUnderscore: 'allow',
-      },
-      {
-        selector: 'import',
-        format: ['camelCase', 'PascalCase'],
-      },
-      {
-        selector: 'variable',
-        format: ['camelCase', 'UPPER_CASE'],
-        leadingUnderscore: 'allow',
-        trailingUnderscore: 'allow',
-      },
-      {
-        selector: ['variableLike'],
-        format: ['camelCase'],
-        leadingUnderscore: 'allow',
-        trailingUnderscore: 'allow',
-      },
-      {
-        selector: 'typeLike',
-        format: ['PascalCase'],
-        custom: {
-          regex: '^(I|T)[A-Z]',
-          match: false,
-        },
-      },
-      {
-        selector: 'typeParameter',
-        format: ['PascalCase'],
-        prefix: ['T'],
-      },
-      {
-        selector: 'enumMember',
-        format: ['camelCase', 'UPPER_CASE'],
-      },
-      {
-        selector: 'objectLiteralProperty',
-        format: null,
-        filter: {
-          regex: '^/',
-          match: true,
-        },
-      },
-    ],
+    '@typescript-eslint/naming-convention': ['error', ...namingConvention],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/prefer-readonly': 'error',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
