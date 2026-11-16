@@ -20,8 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Changed
 
-- Next.js preset: route files (`app/**/route.{js,jsx,ts,tsx}`) accept `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE` and `OPTIONS` as exported function names through a narrow `@typescript-eslint/naming-convention` selector, so apps no longer turn the rule off for them. Any other name still follows the base convention, and `functional/no-loop-statements` stays on in route handlers.
-  - Behavior change under `app/api/**/route.*`: `@typescript-eslint/naming-convention` is no longer turned off there, so names other than the methods now follow the base convention (for example a `snake_case` local or a `PascalCase` constant). The exported-function allowlist also accepts `HEAD`, `PATCH`, `OPTIONS` and `generateStaticParams`, which it used to reject.
+- Next.js preset: route files (`app/**/route.{js,jsx,ts}`) accept `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE` and `OPTIONS` as exported function names through a narrow `@typescript-eslint/naming-convention` selector, so apps no longer turn the rule off for them. Any other name still follows the base convention, and `functional/no-loop-statements` stays on in route handlers. `route.tsx` keeps the `.tsx` naming rule, which already accepts PascalCase functions such as `GET` and JSX helpers.
+  - Under `app/api/**/route.*`, `@typescript-eslint/naming-convention` stays off, as before. The exported-function allowlist there now also accepts `HEAD`, `PATCH`, `OPTIONS` and `generateStaticParams`, which it used to reject. Turning the naming rule on there is tracked for 3.0.0 in #31.
 - Every preset: object and type property names that need quotes (`'content-type'`, `'@type'`, `'x-default'`) are exempt from `@typescript-eslint/naming-convention`, because an external format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
 - Next.js preset: ignore `.next/`, `out/`, `build/` and `next-env.d.ts` by default, as Next.js does.
 

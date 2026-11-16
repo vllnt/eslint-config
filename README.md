@@ -232,13 +232,14 @@ Everything in React, plus:
 | ----------------------------------------------------------------------------------- | ------------------------------------------- |
 | [@next/eslint-plugin-next](https://nextjs.org/docs/app/api-reference/config/eslint) | Recommended + core web vitals (all `error`) |
 
-- **Route handlers** (`app/**/route.{js,jsx,ts,tsx}`) may export `GET`, `HEAD`, `POST`,
+- **Route handlers** (`app/**/route.{js,jsx,ts}`) may export `GET`, `HEAD`, `POST`,
   `PUT`, `PATCH`, `DELETE` and `OPTIONS` as functions. Any other name keeps the base
   naming rule, so `FETCH`, `Get`, a non-exported `GET`, or `GET` outside a route file
   still fail. Config exports such as `dynamic`, `revalidate` and `runtime` are
-  camelCase and already pass.
-- Under `app/api/**/route.*`, only those methods and `generateStaticParams` may be
-  exported as functions.
+  camelCase and already pass. `route.tsx` follows the `.tsx` rule, which accepts
+  PascalCase functions, so `GET` and JSX helpers pass there.
+- Under `app/api/**/route.*`, the naming rule stays off, and only those methods and
+  `generateStaticParams` may be exported as functions.
 - `functional/no-loop-statements` stays on in route handlers; build the response with
   `map` or `reduce`.
 - `.next/`, `out/`, `build/` and `next-env.d.ts` are ignored.
