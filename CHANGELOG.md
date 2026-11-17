@@ -6,26 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [2.1.0] - 2026-11-17
 
-### Security
-
-- Pin `typescript-eslint` to 8.73.0, whose `@typescript-eslint/typescript-estree` depends on
-  `minimatch` ^11.0.1. This removes `minimatch` 10.2.6 (GHSA-g3hv-75wg-m249, a denial of
-  service through glob pattern amplification, fixed in 11.0.1) from the dependency tree
-  this package installs for the base, React, Next.js and Node.js presets. The pattern
-  input comes from the consumer's own ESLint and TypeScript configuration, so the
-  practical risk was a slow lint run. Every `@convex-dev/eslint-plugin` 5.x release still
-  pins `@typescript-eslint/*` ~8.58, which needs `minimatch` ^10, so the Convex preset pulls
-  the affected version until that plugin updates. Projects can add the override this
-  repository uses: `"minimatch@>=7.0.0 <11.0.1": "^11.0.1"` under `pnpm.overrides`.
-- typescript-eslint 8.73.0 adds `@typescript-eslint/no-unsafe-class-instance-assignment`
-  to `strictTypeChecked`; it stays off so the upgrade adds no errors. Turning it on is
-  tracked for 3.0.0 in #31.
-
-### Removed
-
-- The `eslint-config-prettier` dependency. No preset imported it, so it never disabled a
-  rule; lint behavior is unchanged.
-
 ### Added
 
 - TypeScript declarations for every preset entry point, so TypeScript consumers no longer get TS7016 on `import { nextjs } from "@vllnt/eslint-config"` or the subpath imports under `strict`. A type-check test covers every export.
@@ -45,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Every preset: object and type property names that need quotes (`'content-type'`, `'@type'`, `'x-default'`) are exempt from `@typescript-eslint/naming-convention`, because an external format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
 - Next.js preset: ignore `.next/`, `out/`, `build/` and `next-env.d.ts` by default, as Next.js does.
 
+- typescript-eslint 8.73.0 adds `@typescript-eslint/no-unsafe-class-instance-assignment`
+  to `strictTypeChecked`; it stays off so the upgrade adds no errors. Turning it on is
+  tracked for 3.0.0 in #31.
 - Upgrade dependencies: `typescript-eslint` 8.73.0, `@next/eslint-plugin-next` 16.4.3,
   `eslint-plugin-functional` 10.0.1, `eslint-plugin-perfectionist` 5.13.0,
   `eslint-plugin-prettier` 5.5.7, `eslint-plugin-turbo` 2.11.10,
@@ -70,6 +53,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Consolidate repository contributor guidance in `AGENTS.md` and enforce that it remains the sole agent instruction surface.
 - Document ESLint Config Inspector, aggregate rule timing, granular per-file stats, and repeatable profiling practices.
 - Require agents to verify inherited rules against the lockfile-pinned plugin version and the composed preset source in `AGENTS.md`.
+
+### Removed
+
+- The `eslint-config-prettier` dependency. No preset imported it, so it never disabled a
+  rule; lint behavior is unchanged.
+
+### Security
+
+- Pin `typescript-eslint` to 8.73.0, whose `@typescript-eslint/typescript-estree` depends on
+  `minimatch` ^11.0.1, so that path no longer installs `minimatch` 10.2.6
+  (GHSA-g3hv-75wg-m249, a denial of service through glob pattern amplification, fixed in
+  11.0.1). Consumers still get the affected version through `@convex-dev/eslint-plugin`, a
+  dependency of this package whatever preset is used: every 5.x release pins
+  `@typescript-eslint/*` ~8.58, which needs `minimatch` ^10. Until that plugin updates,
+  force the fixed version in the consuming project: `"minimatch@>=7.0.0 <11.0.1": "^11.0.1"`
+  under `pnpm.overrides` (as this repository does), `overrides` for npm or `resolutions`
+  for Yarn. The glob patterns come from the project's own ESLint and TypeScript
+  configuration, so the practical risk is a slow lint run.
 
 ## [2.0.0] - 2026-08-31
 
