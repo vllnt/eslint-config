@@ -104,6 +104,8 @@ export const typescriptConfig = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-unsafe-assignment': 'off',
+    // New in typescript-eslint 8.73.0 `strictTypeChecked`; enabling it is a breaking change (#31).
+    '@typescript-eslint/no-unsafe-class-instance-assignment': 'off',
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-base-to-string': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'off',
