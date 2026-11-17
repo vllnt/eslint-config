@@ -44,7 +44,6 @@
     "@convex-dev/eslint-plugin": "^5.0.0",
     "@eslint/js": "^9.39.5",
     "@next/eslint-plugin-next": "^16.4.3",
-    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-boundaries": "^5.4.0",
     "eslint-plugin-css-modules": "^2.12.0",
     "eslint-plugin-functional": "^10.0.1",
@@ -57,7 +56,7 @@
     "eslint-plugin-turbo": "^2.11.10",
     "eslint-plugin-unicorn": "^65.0.1",
     "eslint-plugin-write-good-comments": "^0.2.0",
-    "typescript-eslint": "8.72.0"
+    "typescript-eslint": "8.73.0"
   },
   "peerDependencies": {
     "eslint": ">=9",
@@ -89,7 +88,8 @@
     ],
     "overrides": {
       "handlebars": ">=4.7.9",
-      "deepmerge-ts@<8.0.0": "^8.0.2"
+      "deepmerge-ts@<8.0.0": "^8.0.2",
+      "minimatch@>=7.0.0 <11.0.1": "^11.0.1"
     }
   }
 }

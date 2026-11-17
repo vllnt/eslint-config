@@ -4,7 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - 2026-11-16
+## [2.1.0] - 2026-11-17
+
+### Security
+
+- Pin `typescript-eslint` to 8.73.0, whose `@typescript-eslint/typescript-estree` depends on
+  `minimatch` ^11.0.1. This removes `minimatch` 10.2.6 (GHSA-g3hv-75wg-m249, a denial of
+  service through glob pattern amplification, fixed in 11.0.1) from the dependency tree
+  this package installs for the base, React, Next.js and Node.js presets. The pattern
+  input comes from the consumer's own ESLint and TypeScript configuration, so the
+  practical risk was a slow lint run. Every `@convex-dev/eslint-plugin` 5.x release still
+  pins `@typescript-eslint/*` ~8.58, which needs `minimatch` ^10, so the Convex preset pulls
+  the affected version until that plugin updates. Projects can add the override this
+  repository uses: `"minimatch@>=7.0.0 <11.0.1": "^11.0.1"` under `pnpm.overrides`.
+- typescript-eslint 8.73.0 adds `@typescript-eslint/no-unsafe-class-instance-assignment`
+  to `strictTypeChecked`; it stays off so the upgrade adds no errors. Turning it on is
+  tracked for 3.0.0 in #31.
+
+### Removed
+
+- The `eslint-config-prettier` dependency. No preset imported it, so it never disabled a
+  rule; lint behavior is unchanged.
 
 ### Added
 
@@ -25,7 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Every preset: object and type property names that need quotes (`'content-type'`, `'@type'`, `'x-default'`) are exempt from `@typescript-eslint/naming-convention`, because an external format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
 - Next.js preset: ignore `.next/`, `out/`, `build/` and `next-env.d.ts` by default, as Next.js does.
 
-- Upgrade dependencies: `typescript-eslint` 8.72.0, `@next/eslint-plugin-next` 16.4.3,
+- Upgrade dependencies: `typescript-eslint` 8.73.0, `@next/eslint-plugin-next` 16.4.3,
   `eslint-plugin-functional` 10.0.1, `eslint-plugin-perfectionist` 5.13.0,
   `eslint-plugin-prettier` 5.5.7, `eslint-plugin-turbo` 2.11.10,
   `eslint-plugin-simple-import-sort` 14.0.0, `eslint-plugin-unicorn` 65.0.1 and `@convex-dev/eslint-plugin` 5.0.0;
