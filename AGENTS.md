@@ -19,11 +19,14 @@ flat/           ← shipped code (included in npm tarball)
   convex.js     ← Convex preset
   turbo.js      ← Turborepo preset
   boundaries.js ← Architecture boundaries preset
+  playwright.js ← Playwright overlay preset (opt-in)
+  ignores.js    ← Shared ignores list
   convex-plugin.js    ← convex-rules ESLint plugin
   convex-rules/       ← 7 custom Convex lint rules
   core/               ← shared config fragments
 tests/
   smoke.test.js ← export/shape/hygiene tests (node:test)
+  lint-behavior.test.js ← real ESLint runs over tests/fixtures/lint (node:test)
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
 ```
 
@@ -31,7 +34,7 @@ tests/
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke and Convex rule tests |
+| `pnpm test` | Smoke, lint behavior and Convex rule tests |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture
@@ -41,6 +44,7 @@ tests/
 - `flat/index.js` is the barrel that re-exports all presets
 - Custom Convex rules live in `flat/convex-rules/` and are bundled via `flat/convex-plugin.js`
 - Tests use `node:test` (no external test runner)
+- A rule override or relaxation needs a fixture that lints clean and a near-miss that still fails, under `tests/fixtures/lint`, checked in `tests/lint-behavior.test.js`
 
 ## Conventions
 

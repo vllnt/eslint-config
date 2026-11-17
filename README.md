@@ -20,7 +20,7 @@ Every rule enforces `error` — no warnings, no compromises.
 - **ESLint v9+ flat config only** — no legacy `.eslintrc`
 - **TypeScript-first** with `strictTypeChecked` + `stylisticTypeChecked`
 - **Prettier built-in** — formatting as lint errors, zero config
-- **7 presets** — Base, React, Next.js, Node.js, Convex, Turbo, Boundaries
+- **8 presets** — Base, React, Next.js, Node.js, Convex, Turbo, Boundaries, Playwright — plus a shared `ignores` list
 - **Composable** — spread arrays, override anything
 
 ## Install
@@ -45,8 +45,8 @@ export default [...nextjs];
 
 Each preset is an array — spread it into your flat config. Base and its React,
 Next.js, and Node.js variants enable `projectService: true` for type-aware linting.
-Convex also enables it; Turbo and Boundaries are opt-in additions, not replacements
-for a language preset.
+Convex also enables it; Turbo, Boundaries and Playwright are opt-in additions, not
+replacements for a language preset.
 
 ## Presets
 
@@ -59,6 +59,8 @@ for a language preset.
 | `@vllnt/eslint-config/convex`     | Convex backends (4 official + 7 custom rules)          |
 | `@vllnt/eslint-config/turbo`      | Turborepo cache rules (opt-in)                         |
 | `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in)             |
+| `@vllnt/eslint-config/playwright` | Playwright test and config files (opt-in)              |
+| `@vllnt/eslint-config/ignores`    | Shared ignores for build and test output (opt-in)      |
 
 ## Composing presets
 
@@ -85,6 +87,48 @@ export default [
   },
 ];
 ```
+
+## Playwright
+
+An opt-in addition, like Turbo and Boundaries: spread it after a language preset, which
+registers the plugins and rules it adjusts.
+
+```js
+import { nextjs } from "@vllnt/eslint-config/nextjs";
+import { playwright } from "@vllnt/eslint-config/playwright";
+
+export default [...nextjs, ...playwright];
+```
+
+It applies to `**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and
+`**/playwright.config.{ts,mts}`, and relaxes three rules there:
+
+| Rule                                   | Change                        | Why                                                                          |
+| -------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
+| `functional/no-loop-statements`        | off                           | Tests and projects are generated per viewport, locale or route               |
+| `max-lines-per-function`               | off                           | A `describe` block or setup step covers a whole page or sign-in flow         |
+| `@typescript-eslint/naming-convention` | object literal keys unchecked | Expected-data tables use the page's labels and the API's field names as keys |
+
+Everything else stays on, including `write-good-comments` and
+`unicorn/prevent-abbreviations`: comments and names in tests follow the same rules as
+app code. Variable and function names are still checked, and so are helpers in
+`tests/e2e/` that are not `*.spec.ts` or `*.setup.ts`.
+
+## Shared ignores
+
+```js
+import { ignores } from "@vllnt/eslint-config/ignores";
+import { nextjs } from "@vllnt/eslint-config/nextjs";
+
+export default [...ignores, ...nextjs];
+```
+
+`ignores` covers `coverage/`, `playwright-report/`, `test-results/`, `.turbo/` and
+`.worktrees/` at any depth, and `dist/` and `build/` at the config root, so a source
+folder with one of those names deeper in the tree is still linted. ESLint already
+ignores `node_modules/` and `.git/`, and the Next.js preset adds its own output. Tool
+config files such as `next.config.*` or `postcss.config.*` stay yours to ignore,
+because whether they sit inside your `tsconfig.json` is a project decision.
 
 ## Inspecting and profiling ESLint
 
@@ -188,7 +232,22 @@ Everything in React, plus:
 | ----------------------------------------------------------------------------------- | ------------------------------------------- |
 | [@next/eslint-plugin-next](https://nextjs.org/docs/app/api-reference/config/eslint) | Recommended + core web vitals (all `error`) |
 
-Route handler method restrictions, page/layout `max-lines-per-function` override.
+- **Route handlers** (`app/**/route.{js,jsx,ts}`) may export `GET`, `HEAD`, `POST`,
+  `PUT`, `PATCH`, `DELETE` and `OPTIONS` as functions. Any other name keeps the base
+  naming rule, so `FETCH`, `Get`, a non-exported `GET`, or `GET` outside a route file
+  still fail. Config exports such as `dynamic`, `revalidate` and `runtime` are
+  camelCase and already pass. `route.tsx` follows the `.tsx` rule, which accepts
+  PascalCase functions, so `GET` and JSX helpers pass there.
+- Under `app/api/**/route.*`, the naming rule stays off, and only those methods and
+  `generateStaticParams` may be exported as functions.
+- `functional/no-loop-statements` stays on in route handlers; build the response with
+  `map` or `reduce`.
+- `.next/`, `out/`, `build/` and `next-env.d.ts` are ignored.
+- Pages and layouts get a `max-lines-per-function` override.
+
+In every preset, object and type property names that need quotes (`'content-type'`,
+`'@type'`, `'x-default'`) are exempt from the naming convention, because an external
+format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
 
 ### Opt-in
 
@@ -313,7 +372,7 @@ Add to `.vscode/settings.json` for monorepo support:
 - [Contributing](CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
 - [Security policy and private vulnerability reporting](SECURITY.md)
 
-npm `latest` is stable `2.0.0` at this audit. `@canary` selects moving prerelease
+npm `latest` is stable `2.1.0` at this audit. `@canary` selects moving prerelease
 builds; pin and test them before adoption.
 
 ## Author

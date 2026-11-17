@@ -32,6 +32,8 @@
     "./react": "./flat/react.js",
     "./turbo": "./flat/turbo.js",
     "./boundaries": "./flat/boundaries.js",
+    "./playwright": "./flat/playwright.js",
+    "./ignores": "./flat/ignores.js",
     "./package.json": "./package.json"
   },
   "scripts": {

@@ -6,6 +6,7 @@ import { imports } from './core/imports.js'
 import { format } from './core/format.js'
 import { unicornConfig, unicornTsx, unicornFilename } from './core/unicorn.js'
 import {
+  namingConvention,
   typescriptConfig,
   typescriptTsx,
   typescriptTest,
@@ -13,7 +14,22 @@ import {
 } from './core/typescript.js'
 import { reactConfig } from './core/react.js'
 
+// The methods Next.js 16 accepts as route handler exports (route.md).
+const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+const httpMethodPattern = HTTP_METHODS.join('|')
+// `generateStaticParams` is the one other function a route file may export;
+// the segment config exports (`dynamic`, `revalidate`, `runtime`, ...) are
+// camelCase constants, so the base naming rule already accepts them.
+const routeFunctionPattern = [...HTTP_METHODS, 'generateStaticParams'].join('|')
+const routeExportMessage = `Only the HTTP method handlers (${HTTP_METHODS.join(', ')}) and generateStaticParams may be exported as functions from route.ts`
+
 export const nextjs = tseslint.config(
+  {
+    // Next.js build output and generated files: the defaults of `eslint-config-next`.
+    // Generic names match only at the config root so a source folder called
+    // `build` or `out` deeper in the tree stays linted.
+    ignores: ['**/.next/**', '**/next-env.d.ts', 'build/**', 'out/**'],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -60,20 +76,37 @@ export const nextjs = tseslint.config(
     },
   },
   {
+    // Route handlers are named after the HTTP method, so accept exactly those
+    // exported function names; every other name keeps the base convention.
+    // Not `.tsx`: `typescriptTsx` already accepts PascalCase functions there
+    // (so `GET` passes), and a rule here would replace it, not add to it.
+    files: ['**/app/**/route.{js,jsx,ts}'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        ...namingConvention,
+        {
+          selector: 'function',
+          modifiers: ['exported'],
+          format: null,
+          filter: { regex: `^(${httpMethodPattern})$`, match: true },
+        },
+      ],
+    },
+  },
+  {
     files: ['**/app/api/**/route.{js,jsx,ts,tsx}'],
     rules: {
       '@typescript-eslint/naming-convention': 'off',
       'no-restricted-syntax': [
         'error',
         {
-          selector:
-            'ExportNamedDeclaration > FunctionDeclaration:not([id.name=/^(GET|POST|PUT|DELETE)$/])',
-          message: 'Only GET, POST, PUT, DELETE are allowed as exported route handlers in route.ts',
+          selector: `ExportNamedDeclaration > FunctionDeclaration:not([id.name=/^(${routeFunctionPattern})$/])`,
+          message: routeExportMessage,
         },
         {
-          selector:
-            'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/^(ArrowFunctionExpression|FunctionExpression)$/]:not([id.name=/^(GET|POST|PUT|DELETE)$/])',
-          message: 'Only GET, POST, PUT, DELETE are allowed as exported route handlers in route.ts',
+          selector: `ExportNamedDeclaration > VariableDeclaration > VariableDeclarator[init.type=/^(ArrowFunctionExpression|FunctionExpression)$/]:not([id.name=/^(${routeFunctionPattern})$/])`,
+          message: routeExportMessage,
         },
       ],
     },

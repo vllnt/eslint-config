@@ -18,6 +18,8 @@ const PRESETS = [
   { subpath: "./convex", name: "convex" },
   { subpath: "./turbo", name: "turbo" },
   { subpath: "./boundaries", name: "boundaries" },
+  { subpath: "./playwright", name: "playwright", overlay: true },
+  { subpath: "./ignores", name: "ignores" },
 ];
 
 describe("exports: all presets resolve as non-empty arrays", () => {
@@ -48,7 +50,7 @@ describe("exports: default exports match named exports", () => {
 });
 
 describe("exports: barrel re-exports all presets", () => {
-  it("index.js has all 7 exports", async () => {
+  it(`index.js has all ${PRESETS.length} exports`, async () => {
     const mod = await import("../flat/index.js");
     for (const { name } of PRESETS) {
       assert.ok(mod[name], `missing "${name}" from barrel`);
@@ -196,6 +198,8 @@ describe("package.json: required fields", () => {
       "./convex",
       "./turbo",
       "./boundaries",
+      "./playwright",
+      "./ignores",
     ];
     for (const exp of expected) {
       assert.ok(pkg.exports[exp], `missing export "${exp}"`);
@@ -229,12 +233,16 @@ function collectFiles(dir) {
 
 describe("rules: every configured rule id resolves to a registered rule", () => {
   // An unknown rule id makes ESLint throw "Definition for rule ... not found" in consumers.
-  for (const { subpath, name } of PRESETS) {
+  for (const { subpath, name, overlay } of PRESETS) {
     it(`${subpath} rule ids resolve`, async () => {
       const file = subpath === "." ? "index" : subpath.slice(2);
       const mod = await import(`../flat/${file}.js`);
+      // An overlay only adjusts rules that the language preset it follows registers.
+      const registered = overlay
+        ? [...(await import("../flat/base.js")).base, ...mod[name]]
+        : mod[name];
       const plugins = {};
-      for (const entry of mod[name]) Object.assign(plugins, entry.plugins);
+      for (const entry of registered) Object.assign(plugins, entry.plugins);
       const unresolved = [];
       for (const entry of mod[name]) {
         for (const id of Object.keys(entry.rules ?? {})) {
