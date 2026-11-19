@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.1]
+
+Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 is approved.
+
+### Changed
+
+- `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
+
 ## [2.1.0] - 2026-11-17
 
 ### Added
