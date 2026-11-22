@@ -11,6 +11,7 @@ Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 
 ### Added
 
 - Privacy Guard CI check and a pre-publish package content check, so personal or private data is blocked before merge and before npm publish.
+- Privacy Guard is re-synced with the skills template so the required check can use an optional SHA baseline. This repository has no baseline, so the check stays full-history.
 
 ### Changed
 
