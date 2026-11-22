@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 is approved.
 
+### Added
+
+- Privacy Guard CI check and a pre-publish package content check, so personal or private data is blocked before merge and before npm publish.
+
 ### Changed
 
 - `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
