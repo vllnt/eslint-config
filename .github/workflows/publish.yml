@@ -51,6 +51,9 @@ jobs:
         with:
           node-version-file: .node-version
           registry-url: https://registry.npmjs.org
+      - name: Check package contents
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/check-package-contents.sh
       - name: Publish canary
         run: |
           set -euo pipefail
@@ -108,6 +111,9 @@ jobs:
           grep -qF "## [$VERSION]" CHANGELOG.md || { echo "::error::CHANGELOG.md has no [$VERSION] entry"; exit 1; }
           awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > "$RUNNER_TEMP/release-notes.md"
 
+      - name: Check package contents
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/check-package-contents.sh
       - name: Publish to npm
         run: |
           set -euo pipefail
