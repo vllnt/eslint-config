@@ -15,6 +15,7 @@ Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 
 
 ### Changed
 
+- Development dependencies bumped within their majors (`@convex-dev/eslint-plugin` 5.0.1, `@next/eslint-plugin-next` 16.4.6, `eslint-plugin-perfectionist` 5.14.0, `eslint-plugin-turbo` 2.11.11, `convex` 1.50.0). No change to the published presets.
 - `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
 
 ## [2.1.0] - 2026-11-17
