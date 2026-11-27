@@ -2,7 +2,9 @@ import { before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ESLint } from "eslint";
+import reactPlugin from "eslint-plugin-react";
+
+import { ESLint } from "./eslint.js";
 
 // These tests run real ESLint over the files in tests/fixtures/lint. Each new
 // behaviour has a fixture that must lint clean and a near-miss that differs in
@@ -63,6 +65,43 @@ function assertRules(results, file, expected) {
     `${file}: ${messages.map(describeMessage).join("; ")}`,
   );
 }
+
+describe(`ESLint ${ESLint.version}: plugins written for older ESLint APIs run`, () => {
+  // ESLint 10 removed `context.getSourceCode()` and `context.getFilename()`,
+  // which write-good-comments and eslint-plugin-react still call (#42).
+  it("nodejs: write-good-comments passes a clear comment and reports a weak one", async () => {
+    const results = await lintFixtures(
+      ["nodejs"],
+      ["pass/lib/clear-comment.ts", "fail/lib/weak-comment.ts"],
+    );
+    assertClean(results, "pass/lib/clear-comment.ts");
+    assertRules(results, "fail/lib/weak-comment.ts", [
+      "write-good-comments/write-good-comments",
+    ]);
+  });
+
+  it("react: eslint-plugin-react passes a clean .tsx file and reports a near-miss", async () => {
+    const results = await lintFixtures(
+      ["react"],
+      ["pass/app/og/route.tsx", "fail/lib/untyped-button.tsx"],
+    );
+    assertClean(results, "pass/app/og/route.tsx");
+    assertRules(results, "fail/lib/untyped-button.tsx", ["react/button-has-type"]);
+  });
+
+  it("react: a project can register its own eslint-plugin-react next to the preset", async () => {
+    const eslint = new ESLint({
+      cwd: LINT_DIR,
+      overrideConfigFile: true,
+      overrideConfig: [
+        ...(await compose("react")),
+        { plugins: { react: reactPlugin }, rules: { "react/jsx-key": "error" } },
+      ],
+    });
+    const [result] = await eslint.lintFiles(["pass/app/og/route.tsx"]);
+    assert.deepEqual(result.messages.map(describeMessage), []);
+  });
+});
 
 describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
   let results;

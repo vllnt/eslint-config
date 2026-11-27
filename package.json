@@ -1,6 +1,6 @@
 {
   "name": "@vllnt/eslint-config",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "type": "module",
   "description": "Strict ESLint config for TypeScript projects. All rules enforce error — no warnings.",
   "license": "MIT",
@@ -44,11 +44,13 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "pnpm check:agents && node --test tests/*.test.js",
-    "check:agents": "node -e \"const f=require('node:fs');if(!f.existsSync('AGENTS.md')||f.existsSync('CLAUDE.md')||f.existsSync('.claude'))process.exit(1)\""
+    "test": "pnpm check:agents && node --test tests/*.test.js && pnpm test:eslint10",
+    "check:agents": "node -e \"const f=require('node:fs');if(!f.existsSync('AGENTS.md')||f.existsSync('CLAUDE.md')||f.existsSync('.claude'))process.exit(1)\"",
+    "test:eslint10": "LINT_ESLINT=eslint10 node --test tests/smoke.test.js tests/lint-behavior.test.js tests/convex-rules.test.js"
   },
   "dependencies": {
     "@convex-dev/eslint-plugin": "^5.0.1",
+    "@eslint/compat": "^2.1.1",
     "@eslint/js": "^9.39.5",
     "@next/eslint-plugin-next": "^16.4.6",
     "eslint-plugin-boundaries": "^5.4.0",
@@ -83,6 +85,7 @@
     "@typescript/native": "npm:typescript@7.0.2",
     "convex": "^1.51.0",
     "eslint": "^9.39.5",
+    "eslint10": "npm:eslint@^10.15.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "pnpm": {

@@ -1,4 +1,4 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "./eslint.js";
 
 import plugin from "../flat/convex-plugin.js";
 

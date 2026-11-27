@@ -27,6 +27,7 @@ flat/           ← shipped code (included in npm tarball)
 tests/
   smoke.test.js ← export/shape/hygiene tests (node:test)
   lint-behavior.test.js ← real ESLint runs over tests/fixtures/lint (node:test)
+  eslint.js ← the ESLint under test: 9 by default, 10 with LINT_ESLINT=eslint10
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
   package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
 ```
@@ -35,7 +36,8 @@ tests/
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke, lint behavior, Convex rule and package contents tests |
+| `pnpm test` | Smoke, lint behavior, Convex rule and package contents tests on ESLint 9, then `pnpm test:eslint10` |
+| `pnpm test:eslint10` | Smoke, lint behavior and Convex rule tests on ESLint 10 (POSIX shell) |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture

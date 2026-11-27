@@ -1,10 +1,11 @@
 import functionalPlugin from 'eslint-plugin-functional'
 import writeGoodCommentsPlugin from 'eslint-plugin-write-good-comments'
+import { withLegacyContext } from './compat.js'
 
 export const goodPractices = {
   plugins: {
     functional: functionalPlugin,
-    'write-good-comments': writeGoodCommentsPlugin,
+    'write-good-comments': withLegacyContext(writeGoodCommentsPlugin),
   },
   rules: {
     'no-unreachable-loop': 'error',
