@@ -4,25 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.1.1]
-
-Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 is approved.
+## [2.2.0] - 2026-11-27
 
 ### Added
 
+- ESLint 10 support (#42). The `eslint >=9` peer range is unchanged and is now tested on 9 and 10: `pnpm test` runs the smoke, lint-behavior and Convex rule tests again on ESLint 10 through an `eslint10` development alias. `@eslint/compat` is a new dependency. On ESLint 10, `eslint-plugin-react` 7.37.5 and `eslint-plugin-jsx-a11y` 6.10.2 print a peer warning, because their own ranges stop at 9.
 - Privacy Guard CI check and a pre-publish package content check, so personal or private data is blocked before merge and before npm publish.
 - Privacy Guard is re-synced with the skills template so the required check can use an optional SHA baseline. This repository has no baseline, so the check stays full-history.
 - The npm package now ships `CHANGELOG.md` and `llms.txt` next to `README.md`, so coding agents can read docs that match the installed version from `node_modules/@vllnt/eslint-config/`. README and `llms.txt` each have a "For coding agents" note, and `llms.txt` links to the shipped files with relative paths and to the vllnt oss index.
 - A package-contents test runs `npm pack --dry-run` and fails when `README.md`, `LICENSE`, `CHANGELOG.md`, `llms.txt` or an `exports` target is missing from the tarball, when tests, scripts or contributor files (`AGENTS.md`, `CONTRIBUTING.md`) are packed, or when a relative link in `llms.txt` points outside the tarball.
 - `package.json` sets `homepage` to https://oss.vllnt.com/packages/eslint-config and adds the `flat-config`, `convex`, `playwright` and `turborepo` keywords.
 
+### Fixed
+
+- On ESLint 10, every preset crashed: `write-good-comments` with `context.getSourceCode is not a function`, and `eslint-plugin-react` with `contextOrFilename.getFilename is not a function`. The presets now run the rules of `eslint-plugin-write-good-comments`, `eslint-plugin-react` and `eslint-plugin-css-modules` through `fixupRule` from `@eslint/compat`, which adds back the context methods ESLint 10 removed. The rules are replaced in place, so the plugin object stays the one a project imports: a config that registers its own `eslint-plugin-react` next to a preset keeps working, instead of failing with `Cannot redefine plugin "react"`. Rule results on ESLint 9 are unchanged.
+
 ### Changed
 
 - Dependencies bumped within their majors (#22). Shipped plugins: `@convex-dev/eslint-plugin` 5.0.1, `@next/eslint-plugin-next` 16.4.6, `eslint-plugin-perfectionist` 5.14.0 and `eslint-plugin-turbo` 2.11.13 (2.11.13 changes only its version string). Development: `convex` 1.51.0, pnpm 10.34.9 and a lockfile refresh within the existing ranges. The repository's `handlebars` override now requires 4.7.10.
   - `pnpm audit` is clean in this repository only because of its pnpm overrides, which do not reach consumers. A consumer install still gets `handlebars` 4.7.8 through `eslint-plugin-boundaries` 5 (critical advisories; fixed from Boundaries 7.2.1, #31), `deepmerge-ts` 7 through `eslint-plugin-functional` 10.0.1 (GHSA-ggr8-5vv4-36mx; no `eslint-plugin-functional` release uses `deepmerge-ts` 8 yet) and `minimatch` 10 through `@convex-dev/eslint-plugin` (GHSA-g3hv-75wg-m249; 6.0.0 keeps the same pins). They run only inside ESLint; whether lint input can reach the vulnerable code is not verified.
-  - Held majors: `eslint` and `@eslint/js` 10 (`@eslint/js` 10 drops ESLint 9), `eslint-plugin-unicorn` 66 to 80 (need ESLint >= 10.4), `eslint-plugin-boundaries` 6 and 7 (change what the preset reports, #31). `@convex-dev/eslint-plugin` 6.0.0 and `typescript-eslint` 8.74.0 are newer than the 7-day minimum release age. pnpm 11 and 12 no longer read the install policy from `package.json`, so moving it is left for its own change.
-- README: a "Related packages" section (`@vllnt/typescript`) and a vllnt oss footer. It now describes what the presets actually configure: presets take no options and only subpaths have a default export; the install command pins `eslint@^9`; `typescript` is required by every preset that type-checks; in React and Next.js, `.tsx` and `*.decorator.ts` files (and `*.decorator.ts` in Node.js) check only function names, and Next.js `app/api/**/route.*` drops the naming rule and the enum and `| undefined` bans; css-modules has no rule on; Boundaries needs `boundaries/elements`; `snake-case-filenames` only checks `convex/`; and the Perfectionist, React Hooks and Convex filename rules are listed as configured. Contributor docs that do not ship link to GitHub. Lint rules are unchanged.
-- `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
+  - Held majors: `@eslint/js` 10 (it drops ESLint 9, so the presets keep `@eslint/js` 9 on both ESLint majors), `eslint-plugin-unicorn` 66 to 80 (need ESLint >= 10.4), `eslint-plugin-boundaries` 6 and 7 (change what the preset reports, #31). `@convex-dev/eslint-plugin` 6.0.0 and `typescript-eslint` 8.74.0 are newer than the 7-day minimum release age. pnpm 11 and 12 no longer read the install policy from `package.json`, so moving it is left for its own change.
+- README: a "Related packages" section (`@vllnt/typescript`) and a vllnt oss footer. It now describes what the presets actually configure: presets take no options and only subpaths have a default export; the install command pins the ESLint major (`eslint@^10` since this release; `eslint@^9` also works); `typescript` is required by every preset that type-checks; in React and Next.js, `.tsx` and `*.decorator.ts` files (and `*.decorator.ts` in Node.js) check only function names, and Next.js `app/api/**/route.*` drops the naming rule and the enum and `| undefined` bans; css-modules has no rule on; Boundaries needs `boundaries/elements`; `snake-case-filenames` only checks `convex/`; and the Perfectionist, React Hooks and Convex filename rules are listed as configured. Contributor docs that do not ship link to GitHub. Lint rules are unchanged.
+- Canaries always sort above the current stable: the publish workflow bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
+- Still open for 3.0.0 (#31), because each fix would fail code that lints clean today. In React and Next.js, `.tsx` and `*.decorator.ts` files check only function names, and so do `*.decorator.ts` files in Node.js. Next.js `app/api/**/route.*` drops the enum and `| undefined` bans. css-modules is registered with no rule on. `snake-case-filenames` skips `src/component/`.
 
 ## [2.1.0] - 2026-11-17
 
@@ -141,6 +145,7 @@ Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 
 - Smoke tests with 43 assertions
 - CI/CD with GitHub Actions (test + canary publish + release)
 
+[2.2.0]: https://github.com/vllnt/eslint-config/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/vllnt/eslint-config/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/vllnt/eslint-config/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/vllnt/eslint-config/compare/v1.0.0...v1.0.1
