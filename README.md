@@ -259,7 +259,7 @@ In every preset, object and type property names that need quotes (`'content-type
 `'@type'`, `'x-default'`) are exempt from the naming convention, because an external
 format fixes their spelling. Names that do not need quotes (`user_id`) are still checked
 wherever the full naming rule applies (not in React and Next.js `.tsx` files, `*.decorator.ts` in
-React, Next.js and Node.js, or `app/api/**/route.*`).
+React, Next.js and Node.js, or Next.js `app/api/**/route.*`).
 
 ### Opt-in
 
@@ -361,7 +361,7 @@ convex/
 
 | Package                         | Required                                       |
 | ------------------------------- | ---------------------------------------------- |
-| `eslint` >= 9                   | Yes (tested on 9; the pinned React and jsx-a11y plugins do not support 10) |
+| `eslint` >= 9                   | Yes (tested on 9; eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 do not support 10) |
 | `prettier` >= 3                 | Yes                                            |
 | `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
 
