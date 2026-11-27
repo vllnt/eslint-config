@@ -2,13 +2,14 @@ import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y'
 import cssModulesPlugin from 'eslint-plugin-css-modules'
+import { withLegacyContext } from './compat.js'
 
 export const reactConfig = {
   plugins: {
-    react: reactPlugin,
+    react: withLegacyContext(reactPlugin),
     'react-hooks': reactHooksPlugin,
     'jsx-a11y': jsxA11yPlugin,
-    'css-modules': cssModulesPlugin,
+    'css-modules': withLegacyContext(cssModulesPlugin),
   },
   settings: {
     react: {

@@ -4,7 +4,7 @@
 
 ESLint v9+ flat config with 8 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries, Playwright, plus a shared `ignores` list. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
 
-Version 2 requires ESLint >=9 (tested on 9), Prettier >=3, and the TypeScript 6 JavaScript API
+Version 2 requires ESLint >=9 (tested on 9 and 10), Prettier >=3, and the TypeScript 6 JavaScript API
 (`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting. Use
 `@typescript/native@npm:typescript@^7.0.2` alongside it for the TypeScript 7 compiler.
 TypeScript 5 is not supported. Stable releases use the npm `latest` tag; `canary`

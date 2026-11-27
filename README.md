@@ -26,13 +26,13 @@ Every rule enforces `error` — no warnings, no compromises.
 ## Install
 
 ```sh
-pnpm add -D @vllnt/eslint-config@^2 @typescript/native@npm:typescript@^7.0.2 eslint@^9 prettier typescript@npm:@typescript/typescript6@^6.0.2
+pnpm add -D @vllnt/eslint-config@^2 @typescript/native@npm:typescript@^7.0.2 eslint@^10 prettier typescript@npm:@typescript/typescript6@^6.0.2
 ```
 
 Version 2 follows the official TypeScript 7 side-by-side migration arrangement:
 `tsc` runs TypeScript 7, while type-aware ESLint tooling imports the TypeScript 6
 JavaScript API through the canonical `typescript` package. TypeScript 5 is no
-longer supported.
+longer supported. ESLint 9 works too (`eslint@^9`).
 
 ## For coding agents
 
@@ -361,12 +361,17 @@ convex/
 
 | Package                         | Required                                       |
 | ------------------------------- | ---------------------------------------------- |
-| `eslint` >= 9                   | Yes (tested on 9; eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 do not support 10) |
+| `eslint` >= 9                   | Yes (tested on 9 and 10; on 10, eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 print a peer warning because their own ranges stop at 9) |
 | `prettier` >= 3                 | Yes                                            |
 | `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
 
 Install `@typescript/native` as `npm:typescript@^7.0.2` when using TypeScript 7
 as the build compiler.
+
+ESLint 10 removed rule-context methods such as `context.getSourceCode()`, which
+eslint-plugin-write-good-comments, eslint-plugin-react and eslint-plugin-css-modules still
+call. The presets add them back for those plugins' rules with `fixupRule` from
+`@eslint/compat`, so the same presets run on ESLint 9 and 10.
 
 ## VS Code
 

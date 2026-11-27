@@ -4,8 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ESLint } from "eslint";
-import { builtinRules } from "eslint/use-at-your-own-risk";
+import { builtinRules, ESLint } from "./eslint.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FLAT_DIR = join(__dirname, "..", "flat");
