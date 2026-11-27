@@ -66,7 +66,7 @@ replacements for a language preset.
 | `@vllnt/eslint-config/nodejs`     | Node.js backends                                       |
 | `@vllnt/eslint-config/convex`     | Convex backends (4 official + 7 custom rules)          |
 | `@vllnt/eslint-config/turbo`      | Turborepo cache rules (opt-in)                         |
-| `@vllnt/eslint-config/boundaries` | Architecture boundary enforcement (opt-in)             |
+| `@vllnt/eslint-config/boundaries` | Architecture boundaries (opt-in; needs `boundaries/elements`) |
 | `@vllnt/eslint-config/playwright` | Playwright test and config files (opt-in)              |
 | `@vllnt/eslint-config/ignores`    | Shared ignores for build and test output (opt-in)      |
 
@@ -221,7 +221,8 @@ and [stats data](https://eslint.org/docs/latest/extend/stats).
 | [eslint-plugin-write-good-comments](https://github.com/kantord/eslint-plugin-write-good-comments) | Comment quality                              |
 
 Plus: strict naming conventions (camelCase, PascalCase types, T-prefixed generics), no enums (union types enforced via AST selector).
-In `.tsx` and `*.decorator.ts` files the naming rule checks only function names (camelCase or PascalCase).
+In the React and Next.js presets, `.tsx` and `*.decorator.ts` files check only function names (camelCase or
+PascalCase); Node.js does this for `*.decorator.ts` only, and Base applies the full rule everywhere.
 
 ### React additions
 
@@ -257,7 +258,8 @@ Everything in React, plus:
 In every preset, object and type property names that need quotes (`'content-type'`,
 `'@type'`, `'x-default'`) are exempt from the naming convention, because an external
 format fixes their spelling. Names that do not need quotes (`user_id`) are still checked
-wherever the full naming rule applies (not in `.tsx`, `*.decorator.ts` or `app/api/**/route.*`).
+wherever the full naming rule applies (not in React and Next.js `.tsx` files, `*.decorator.ts` in
+React, Next.js and Node.js, or `app/api/**/route.*`).
 
 ### Opt-in
 
@@ -359,7 +361,7 @@ convex/
 
 | Package                         | Required                                       |
 | ------------------------------- | ---------------------------------------------- |
-| `eslint` >= 9                   | Yes                                            |
+| `eslint` >= 9                   | Yes (tested on 9; the pinned React and jsx-a11y plugins do not support 10) |
 | `prettier` >= 3                 | Yes                                            |
 | `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
 
