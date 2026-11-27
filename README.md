@@ -26,7 +26,7 @@ Every rule enforces `error` — no warnings, no compromises.
 ## Install
 
 ```sh
-pnpm add -D @vllnt/eslint-config@^2 @typescript/native@npm:typescript@^7.0.2 eslint prettier typescript@npm:@typescript/typescript6@^6.0.2
+pnpm add -D @vllnt/eslint-config@^2 @typescript/native@npm:typescript@^7.0.2 eslint@^9 prettier typescript@npm:@typescript/typescript6@^6.0.2
 ```
 
 Version 2 follows the official TypeScript 7 side-by-side migration arrangement:
@@ -214,13 +214,14 @@ and [stats data](https://eslint.org/docs/latest/extend/stats).
 | [@eslint/js](https://eslint.org/docs/latest/rules/)                                               | ESLint recommended rules                     |
 | [typescript-eslint](https://typescript-eslint.io/)                                                | `strictTypeChecked` + `stylisticTypeChecked` |
 | [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier)                      | Prettier as ESLint errors                    |
-| [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Object, type, union, JSX prop, export sorting |
+| [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Sorts objects, object types, interfaces, unions, enums, JSX props, named exports, Map entries and `includes` arrays |
 | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                    | Modern JS best practices                     |
 | [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort)    | Import ordering                              |
 | [eslint-plugin-functional](https://github.com/eslint-functional/eslint-plugin-functional)         | Functional patterns (no loops, readonly)     |
 | [eslint-plugin-write-good-comments](https://github.com/kantord/eslint-plugin-write-good-comments) | Comment quality                              |
 
 Plus: strict naming conventions (camelCase, PascalCase types, T-prefixed generics), no enums (union types enforced via AST selector).
+In `.tsx` and `*.decorator.ts` files the naming rule checks only function names (camelCase or PascalCase).
 
 ### React additions
 
@@ -229,7 +230,7 @@ Plus: strict naming conventions (camelCase, PascalCase types, T-prefixed generic
 | [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)        | Recommended + jsx-runtime |
 | [eslint-plugin-react-hooks](https://react.dev/reference/rules/rules-of-hooks)   | `recommended-latest`: Rules of Hooks, exhaustive deps, React Compiler rules |
 | [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)  | Accessibility             |
-| [eslint-plugin-css-modules](https://github.com/atfzl/eslint-plugin-css-modules) | CSS module validation     |
+| [eslint-plugin-css-modules](https://github.com/atfzl/eslint-plugin-css-modules) | Registered only: `no-unused-class` is off and no other rule is on |
 
 ### Next.js additions
 
@@ -245,8 +246,9 @@ Everything in React, plus:
   still fail. Config exports such as `dynamic`, `revalidate` and `runtime` are
   camelCase and already pass. `route.tsx` follows the `.tsx` rule, which accepts
   PascalCase functions, so `GET` and JSX helpers pass there.
-- Under `app/api/**/route.*`, the naming rule stays off, and only those methods and
-  `generateStaticParams` may be exported as functions.
+- Under `app/api/**/route.*`, the naming rule is off, and `no-restricted-syntax`
+  only limits function exports to those methods and `generateStaticParams`; the base
+  enum and `| undefined` bans do not apply in those files.
 - `functional/no-loop-statements` stays on in route handlers; build the response with
   `map` or `reduce`.
 - `.next/`, `out/`, `build/` and `next-env.d.ts` are ignored.
@@ -254,14 +256,15 @@ Everything in React, plus:
 
 In every preset, object and type property names that need quotes (`'content-type'`,
 `'@type'`, `'x-default'`) are exempt from the naming convention, because an external
-format fixes their spelling. Names that do not need quotes (`user_id`) are still checked.
+format fixes their spelling. Names that do not need quotes (`user_id`) are still checked
+wherever the full naming rule applies (not in `.tsx`, `*.decorator.ts` or `app/api/**/route.*`).
 
 ### Opt-in
 
 | Preset     | Plugin                                                                                                      |
 | ---------- | ----------------------------------------------------------------------------------------------------------- |
 | Turbo      | [eslint-plugin-turbo](https://turbo.build/repo/docs/reference/eslint-plugin-turbo) cache rules              |
-| Boundaries | [eslint-plugin-boundaries](https://github.com/javierbrea/eslint-plugin-boundaries) architecture enforcement |
+| Boundaries | [eslint-plugin-boundaries](https://github.com/javierbrea/eslint-plugin-boundaries) recommended rules; define `settings['boundaries/elements']` in your config, since with none nothing is enforced |
 
 ---
 
@@ -299,9 +302,9 @@ export default [...base, ...convex];
 
 | Rule                        | Catches                                                      |
 | --------------------------- | ------------------------------------------------------------ |
-| `standard-filenames`        | Factories outside `queries.ts`, `mutations.ts`, `actions.ts` |
+| `standard-filenames`        | Factories outside `queries.ts`, `mutations.ts`, `actions.ts`, `internal_mutations.ts`, `node_actions.ts` |
 | `namespace-separation`      | `query()` in `mutations.ts`, `mutation()` in `queries.ts`    |
-| `snake-case-filenames`      | Hyphens in `convex/` filenames (must be `snake_case`)        |
+| `snake-case-filenames`      | Non-`snake_case` filenames in `convex/` (hyphens, camelCase); names starting uppercase are exempt |
 | `no-bare-v-any`             | `v.any()` outside `validators.ts`                            |
 | `require-returns-validator` | Missing `returns` validator in factory config                |
 | `no-query-in-loop`          | N+1 queries (`ctx.db.query`/`get`/`runQuery` inside loops)   |
@@ -309,10 +312,10 @@ export default [...base, ...convex];
 
 ### Auto-applied overrides
 
-- **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
+- **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts` at the root of `convex/` or `src/component/`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
 - **Migration files** (`convex/migrations/**`) — exempt from `standard-filenames`, `namespace-separation`, `no-query-in-loop`
 - **Generated/test files** (`convex/_generated/**`, `*.test.ts`, `convex/testing/**`) — excluded from the Convex rules (other presets in your config still apply)
-- Sandboxed component sources under `src/component/**` receive the same rules and exclusions.
+- Sandboxed component sources under `src/component/**` receive the same rules and exclusions, except `snake-case-filenames`, which only checks files under `convex/`.
 
 ### Project-specific overrides
 
@@ -358,7 +361,7 @@ convex/
 | ------------------------------- | ---------------------------------------------- |
 | `eslint` >= 9                   | Yes                                            |
 | `prettier` >= 3                 | Yes                                            |
-| `typescript` >= 6.0.2 and < 6.1 | Optional JavaScript API for type-aware linting |
+| `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
 
 Install `@typescript/native` as `npm:typescript@^7.0.2` when using TypeScript 7
 as the build compiler.
@@ -379,7 +382,7 @@ Add to `.vscode/settings.json` for monorepo support:
 - [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
 - [Security policy and private vulnerability reporting](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md)
 
-npm `latest` is stable `2.1.0` at this audit. `@canary` selects moving prerelease
+Stable releases use the npm `latest` tag. `@canary` selects moving prerelease
 builds; pin and test them before adoption.
 
 ## Related packages

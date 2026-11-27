@@ -17,7 +17,7 @@ function packedFiles() {
   const out = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], {
     cwd: ROOT,
     encoding: "utf8",
-    stdio: ["ignore", "pipe", "ignore"],
+    stdio: ["ignore", "pipe", "inherit"],
   });
   return JSON.parse(out)[0].files.map(({ path }) => path);
 }

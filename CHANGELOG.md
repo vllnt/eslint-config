@@ -19,7 +19,7 @@ Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 
 ### Changed
 
 - Development dependencies bumped within their majors (`@convex-dev/eslint-plugin` 5.0.1, `@next/eslint-plugin-next` 16.4.6, `eslint-plugin-perfectionist` 5.14.0, `eslint-plugin-turbo` 2.11.11, `convex` 1.50.0). No change to the published presets.
-- README: a "Related packages" section (`@vllnt/typescript`) and a vllnt oss footer; it now states that presets take no options and that only subpaths have a default export, describes the Perfectionist and React Hooks rule sets as configured, and links contributor docs that do not ship to GitHub. Lint rules are unchanged.
+- README: a "Related packages" section (`@vllnt/typescript`) and a vllnt oss footer. It now describes what the presets actually configure: presets take no options and only subpaths have a default export; the install command pins `eslint@^9`; `typescript` is required by every preset that type-checks; `.tsx`, `*.decorator.ts` and `app/api/**/route.*` files check fewer names, and the API route override drops the enum and `| undefined` bans; css-modules has no rule on; Boundaries needs `boundaries/elements`; `snake-case-filenames` only checks `convex/`; and the Perfectionist, React Hooks and Convex filename rules are listed as configured. Contributor docs that do not ship link to GitHub. Lint rules are unchanged.
 - `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
 
 ## [2.1.0] - 2026-11-17

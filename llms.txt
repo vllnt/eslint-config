@@ -19,7 +19,9 @@ Read them before writing or changing an ESLint config that uses this package.
 ## Entry points
 
 Each entry point exports an array of flat config objects with the same name.
-Presets take no options; spread them and append config objects to override rules.
+Subpaths also have a default export; the root entry has named exports only.
+`./package.json` is exported for tooling. Presets take no options; spread them and
+append config objects to override rules.
 
 - `@vllnt/eslint-config`: `base` (and every preset below as a named export)
 - `@vllnt/eslint-config/nextjs`: `nextjs`
@@ -36,7 +38,8 @@ Presets take no options; spread them and append config objects to override rules
 The Next.js preset accepts route handler exports (`GET`, `HEAD`, `POST`, `PUT`,
 `PATCH`, `DELETE`, `OPTIONS`) by exact name and ignores `.next/`, `out/`, `build/` and
 `next-env.d.ts`. `@vllnt/eslint-config/playwright` is an opt-in overlay for
-`tests/e2e` specs, setup files and `playwright.config.ts` that relaxes
+`**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and
+`**/playwright.config.{ts,mts}` that relaxes
 `functional/no-loop-statements`, `max-lines-per-function` and object-key naming
 only. `@vllnt/eslint-config/ignores` is a shared ignores list. See
 [README](./README.md#playwright) and [Shared ignores](./README.md#shared-ignores).
