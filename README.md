@@ -1,27 +1,26 @@
-<div align="center">
-
 # @vllnt/eslint-config
 
-**Strict, opinionated ESLint flat config for TypeScript projects.**
-Every rule enforces `error` — no warnings, no compromises.
+ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at `error`.
 
-[![npm version](https://img.shields.io/npm/v/@vllnt/eslint-config?color=cb0000&label=npm)](https://www.npmjs.com/package/@vllnt/eslint-config)
-[![CI](https://img.shields.io/github/actions/workflow/status/vllnt/eslint-config/ci.yml?label=CI)](https://github.com/vllnt/eslint-config/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
-[![ESLint](https://img.shields.io/badge/eslint-%3E%3D9-4B32C3)](https://eslint.org)
+## For coding agents
 
-</div>
+The docs ship inside the package, in `node_modules/@vllnt/eslint-config/`: `README.md`, `llms.txt` and `CHANGELOG.md`.
+They match the installed version. Read them before writing or changing an ESLint config that uses this package.
+Every export and every message this package reports is listed under [API](#api) and [Errors and fixes](#errors-and-fixes).
 
----
+## When to use
 
-## Why
+Use it when:
 
-- **ESLint v9+ flat config only** — no legacy `.eslintrc`
-- **TypeScript-first** with `strictTypeChecked` + `stylisticTypeChecked`
-- **Prettier built-in** — formatting as lint errors, zero config
-- **8 presets** — Base, React, Next.js, Node.js, Convex, Turbo, Boundaries, Playwright — plus a shared `ignores` list
-- **Composable** — spread arrays, override anything
+- You lint a TypeScript project with ESLint 9 or 10 flat config (`eslint.config.js`) and want type-aware `typescript-eslint` rules, Prettier formatting and import sorting reported as errors.
+- The project is React, Next.js (App Router), Node.js or Convex, optionally with Turborepo, Playwright e2e tests or architecture boundaries.
+- You want one dev dependency that brings every plugin; you do not install the plugins yourself.
+
+Do not use it when:
+
+- You need warnings, per-preset options or a looser rule set: presets take no options and every rule is `error`. Compose `typescript-eslint` configs and the plugins directly.
+- The project uses `.eslintrc` (ESLint 8 or older): this package is flat config only. Use the configs each plugin publishes for ESLint 8.
+- Type-aware linting must run on TypeScript 5 or only on the TypeScript 7 native compiler: the presets need the TypeScript 6.0 JavaScript API. Use `typescript-eslint` configs that match your TypeScript version.
 
 ## Install
 
@@ -29,16 +28,7 @@ Every rule enforces `error` — no warnings, no compromises.
 pnpm add -D @vllnt/eslint-config@^2 @typescript/native@npm:typescript@^7.0.2 eslint@^10 prettier typescript@npm:@typescript/typescript6@^6.0.2
 ```
 
-Version 2 follows the official TypeScript 7 side-by-side migration arrangement:
-`tsc` runs TypeScript 7, while type-aware ESLint tooling imports the TypeScript 6
-JavaScript API through the canonical `typescript` package. TypeScript 5 is no
-longer supported. ESLint 9 works too (`eslint@^9`).
-
-## For coding agents
-
-The docs ship inside the package, in `node_modules/@vllnt/eslint-config/`:
-`README.md`, `llms.txt` and `CHANGELOG.md`. They match the installed version.
-Read them before writing or changing an ESLint config that uses this package.
+`tsc` runs TypeScript 7 (`@typescript/native`), while type-aware linting imports the TypeScript 6 JavaScript API through the `typescript` package. ESLint 9 works too (`eslint@^9`). Stable releases use the npm `latest` tag; `@canary` is a moving prerelease.
 
 ## Quick start
 
@@ -49,297 +39,96 @@ import { nextjs } from "@vllnt/eslint-config/nextjs";
 export default [...nextjs];
 ```
 
-Each preset is an array — spread it into your flat config. Presets take no options;
-change a rule by appending your own config object (see below). The root entry has
-named exports only; each subpath also has a default export. Base and its React,
-Next.js, and Node.js variants enable `projectService: true` for type-aware linting.
-Convex also enables it; Turbo, Boundaries and Playwright are opt-in additions, not
-replacements for a language preset.
+Run `pnpm exec eslint .`. Every linted `.ts` or `.tsx` file must be included by a `tsconfig.json`, because the presets turn on `projectService` for type-aware rules.
 
-## Presets
+## API
 
-| Import                            | Use case                                               |
-| --------------------------------- | ------------------------------------------------------ |
-| `@vllnt/eslint-config`            | Base — TypeScript strict + Prettier + import sorting   |
-| `@vllnt/eslint-config/nextjs`     | Next.js apps (includes React + a11y + core web vitals) |
-| `@vllnt/eslint-config/react`      | React apps without Next.js                             |
-| `@vllnt/eslint-config/nodejs`     | Node.js backends                                       |
-| `@vllnt/eslint-config/convex`     | Convex backends (4 official + 7 custom rules)          |
-| `@vllnt/eslint-config/turbo`      | Turborepo cache rules (opt-in)                         |
-| `@vllnt/eslint-config/boundaries` | Architecture boundaries (opt-in; needs `boundaries/elements`) |
-| `@vllnt/eslint-config/playwright` | Playwright test and config files (opt-in)              |
-| `@vllnt/eslint-config/ignores`    | Shared ignores for build and test output (opt-in)      |
+Every entry point exports an array of flat config objects. Spread it into your config. The root entry has named exports only; each subpath also has a default export. `./package.json` is exported for tooling.
 
-## Composing presets
+| Export | Import | What it is |
+| --- | --- | --- |
+| `base` | `import { base } from "@vllnt/eslint-config"` | TypeScript strict and stylistic type-checked rules, Prettier, import sorting, Unicorn, functional rules and comment checks ([reference](#base)) |
+| `react` | `import { react } from "@vllnt/eslint-config/react"` | `base` plus React, React Hooks and jsx-a11y ([reference](#react)) |
+| `nextjs` | `import { nextjs } from "@vllnt/eslint-config/nextjs"` | `react` plus the Next.js plugin, route handler names and build output ignores ([reference](#nextjs)) |
+| `nodejs` | `import { nodejs } from "@vllnt/eslint-config/nodejs"` | `base` plus test-file and `*.decorator.ts` overrides ([reference](#nodejs)) |
+| `convex` | `import { convex } from "@vllnt/eslint-config/convex"` | 4 `@convex-dev` rules and 7 `convex-rules` rules for `convex/` and `src/component/` ([reference](#convex)) |
+| `turbo` | `import { turbo } from "@vllnt/eslint-config/turbo"` | Turborepo cache rules; an addition to a language preset ([reference](#turbo)) |
+| `boundaries` | `import { boundaries } from "@vllnt/eslint-config/boundaries"` | Architecture boundaries rules; needs `settings["boundaries/elements"]` ([reference](#boundaries)) |
+| `playwright` | `import { playwright } from "@vllnt/eslint-config/playwright"` | Overlay for Playwright spec, setup and config files ([reference](#playwright)) |
+| `ignores` | `import { ignores } from "@vllnt/eslint-config/ignores"` | Shared ignores for build and test output ([reference](#ignores)) |
 
-Mix and match — presets are arrays:
+Every name above is also a named export of the root entry `@vllnt/eslint-config`.
 
-```js
-import { nodejs } from "@vllnt/eslint-config/nodejs";
-import { turbo } from "@vllnt/eslint-config/turbo";
+### base
 
-export default [...nodejs, ...turbo];
-```
+Also included by `react`, `nextjs` and `nodejs`.
 
-Override any rule by appending a config object:
+| Plugin | What it does |
+| --- | --- |
+| [@eslint/js](https://eslint.org/docs/latest/rules/) | ESLint recommended rules (from `@eslint/js` 9 on both ESLint majors) |
+| [typescript-eslint](https://typescript-eslint.io/) | `strictTypeChecked` + `stylisticTypeChecked`, with `projectService: true` |
+| [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier) | Prettier as ESLint errors |
+| [eslint-plugin-perfectionist](https://perfectionist.dev/) | Sorts objects, object types, interfaces, unions, enums, JSX props, named exports, Map entries and `includes` arrays |
+| [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn) | A curated list of Unicorn rules |
+| [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort) | Import and export ordering |
+| [eslint-plugin-functional](https://github.com/eslint-functional/eslint-plugin-functional) | No loop statements, readonly types |
+| [eslint-plugin-write-good-comments](https://github.com/kantord/eslint-plugin-write-good-comments) | Comment wording |
 
-```js
-import { nodejs } from "@vllnt/eslint-config/nodejs";
+Also: naming conventions (camelCase, PascalCase types without `I` or `T` prefixes, `T`-prefixed type parameters), no enums and no `| undefined` unions on properties (`no-restricted-syntax`), at most 3 parameters, functions of at most 30 lines (70 in `.tsx` files in `react` and `nextjs`), nesting depth at most 3. Object and type property names that need quotes (`'content-type'`, `'@type'`) are exempt from the naming convention; names that do not need quotes (`user_id`) are still checked.
 
-export default [
-  ...nodejs,
-  {
-    rules: {
-      "max-lines-per-function": ["error", { max: 50 }],
-    },
-  },
-];
-```
+### react
 
-## Playwright
+Everything in `base`, plus:
 
-An opt-in addition, like Turbo and Boundaries: spread it after a language preset, which
-registers the plugins and rules it adjusts.
-
-```js
-import { nextjs } from "@vllnt/eslint-config/nextjs";
-import { playwright } from "@vllnt/eslint-config/playwright";
-
-export default [...nextjs, ...playwright];
-```
-
-It applies to `**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and
-`**/playwright.config.{ts,mts}`, and relaxes three rules there:
-
-| Rule                                   | Change                        | Why                                                                          |
-| -------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
-| `functional/no-loop-statements`        | off                           | Tests and projects are generated per viewport, locale or route               |
-| `max-lines-per-function`               | off                           | A `describe` block or setup step covers a whole page or sign-in flow         |
-| `@typescript-eslint/naming-convention` | object literal keys unchecked | Expected-data tables use the page's labels and the API's field names as keys |
-
-Everything else stays on, including `write-good-comments` and
-`unicorn/prevent-abbreviations`: comments and names in tests follow the same rules as
-app code. Variable and function names are still checked, and so are helpers in
-`tests/e2e/` that are not `*.spec.ts` or `*.setup.ts`.
-
-## Shared ignores
-
-```js
-import { ignores } from "@vllnt/eslint-config/ignores";
-import { nextjs } from "@vllnt/eslint-config/nextjs";
-
-export default [...ignores, ...nextjs];
-```
-
-`ignores` covers `coverage/`, `playwright-report/`, `test-results/`, `.turbo/` and
-`.worktrees/` at any depth, and `dist/` and `build/` at the config root, so a source
-folder with one of those names deeper in the tree is still linted. ESLint already
-ignores `node_modules/` and `.git/`, and the Next.js preset adds its own output. Tool
-config files such as `next.config.*` or `postcss.config.*` stay yours to ignore,
-because whether they sit inside your `tsconfig.json` is a project decision.
-
-## Inspecting and profiling ESLint
-
-Run these commands from the consuming project's root so they use its local ESLint,
-configuration, TypeScript project, and installed version of this package. No extra
-inspector dependency is required.
-
-### Inspect the effective configuration
-
-```sh
-pnpm exec eslint --inspect-config
-```
-
-ESLint downloads on demand (via `npx`) and launches the Config Inspector for the
-project's config file; it takes no file argument. Use its file-matching view to see
-which config objects match a path, where a rule was defined, and the final rule
-options. Check representative files from each environment (for example,
-application code, tests, generated code, and Convex code) because flat config is
-resolved per file.
-
-The inspector explains configuration; it does **not** profile lint performance.
-
-### Find slow rules
-
-```sh
-TIMING=1 pnpm exec eslint .
-```
-
-`TIMING=1` prints the ten rules with the highest aggregate execution time after a
-normal lint run. Set `TIMING=all` to display every rule. Treat the percentages as
-directional: type-aware rules often share the one-time cost of creating a
-TypeScript program, so one cold run does not prove that the highest-ranked rule is
-the root cause.
-
-### Find slow files and collect granular stats
-
-```sh
-pnpm exec eslint . \
-  --stats \
-  --format json-with-metadata \
-  --output-file eslint-stats.json
-```
-
-The built-in `json-with-metadata` formatter preserves each file's `stats`,
-including parse, fix, and per-rule lint timings. Use the resulting JSON with a
-stats-aware analyzer or a small script to group by `filePath` and rule ID. Delete
-or gitignore the generated report; it can contain local paths and lint messages.
-
-### Profiling best practices
-
-1. Profile the same file set and command used by CI, without `--fix`.
-2. Run once to warm the operating system's file cache, then compare several runs.
-   Each CLI run is a fresh process, so TypeScript program setup is part of every timing.
-3. Disable ESLint's result cache while benchmarking; cached files have no useful
-   rule timings.
-4. Separate parse time from rule time. High parse time usually points to typed
-   linting or TypeScript project scope rather than an individual rule.
-5. Use Config Inspector on the slowest representative files to confirm which
-   presets and type-aware rules actually apply before changing configuration.
-6. Prefer narrowing ignores, file globs, or TypeScript project scope over disabling
-   correctness rules. Re-run the same baseline after every change.
-
-See ESLint's official documentation for [Config Inspector](https://eslint.org/docs/latest/use/configure/debug#use-the-config-inspector),
-[rule profiling](https://eslint.org/docs/latest/extend/custom-rules#profile-rule-performance),
-and [stats data](https://eslint.org/docs/latest/extend/stats).
-
----
-
-## What's included
-
-### Base (also included by React, Next.js, and Node.js)
-
-| Plugin                                                                                            | What it does                                 |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| [@eslint/js](https://eslint.org/docs/latest/rules/)                                               | ESLint recommended rules                     |
-| [typescript-eslint](https://typescript-eslint.io/)                                                | `strictTypeChecked` + `stylisticTypeChecked` |
-| [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier)                      | Prettier as ESLint errors                    |
-| [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Sorts objects, object types, interfaces, unions, enums, JSX props, named exports, Map entries and `includes` arrays |
-| [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                    | Modern JS best practices                     |
-| [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort)    | Import ordering                              |
-| [eslint-plugin-functional](https://github.com/eslint-functional/eslint-plugin-functional)         | Functional patterns (no loops, readonly)     |
-| [eslint-plugin-write-good-comments](https://github.com/kantord/eslint-plugin-write-good-comments) | Comment quality                              |
-
-Plus: strict naming conventions (camelCase, PascalCase types, T-prefixed generics), no enums (union types enforced via AST selector).
-In the React and Next.js presets, `.tsx` and `*.decorator.ts` files check only function names (camelCase or
-PascalCase); Node.js does this for `*.decorator.ts` only, and Base applies the full rule everywhere.
-
-### React additions
-
-| Plugin                                                                          | What it does              |
-| ------------------------------------------------------------------------------- | ------------------------- |
-| [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)        | Recommended + jsx-runtime |
-| [eslint-plugin-react-hooks](https://react.dev/reference/rules/rules-of-hooks)   | `recommended-latest`: Rules of Hooks, exhaustive deps, React Compiler rules |
-| [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)  | Accessibility             |
+| Plugin | What it does |
+| --- | --- |
+| [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) | Recommended + jsx-runtime, plus 24 more rules |
+| [eslint-plugin-react-hooks](https://react.dev/reference/rules/rules-of-hooks) | `recommended-latest`: Rules of Hooks, exhaustive deps, React Compiler rules |
+| [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) | Recommended accessibility rules |
 | [eslint-plugin-css-modules](https://github.com/atfzl/eslint-plugin-css-modules) | Registered only: `no-unused-class` is off and no other rule is on |
 
-### Next.js additions
+In `.tsx` files, `unicorn/no-null`, `unicorn/no-nested-ternary` and `unicorn/filename-case` are off, and the naming rule checks only function names (camelCase or PascalCase); see [Limits and gotchas](#limits-and-gotchas).
 
-Everything in React, plus:
+### nextjs
 
-| Plugin                                                                              | What it does                                |
-| ----------------------------------------------------------------------------------- | ------------------------------------------- |
-| [@next/eslint-plugin-next](https://nextjs.org/docs/app/api-reference/config/eslint) | Recommended + core web vitals (all `error`) |
+Everything in `react`, plus [@next/eslint-plugin-next](https://nextjs.org/docs/app/api-reference/config/eslint) recommended and core web vitals rules, all at `error`.
 
-- **Route handlers** (`app/**/route.{js,jsx,ts}`) may export `GET`, `HEAD`, `POST`,
-  `PUT`, `PATCH`, `DELETE` and `OPTIONS` as functions. Any other name keeps the base
-  naming rule, so `FETCH`, `Get`, a non-exported `GET`, or `GET` outside a route file
-  still fail. Config exports such as `dynamic`, `revalidate` and `runtime` are
-  camelCase and already pass. `route.tsx` follows the `.tsx` rule, which accepts
-  PascalCase functions, so `GET` and JSX helpers pass there.
-- Under `app/api/**/route.*`, the naming rule is off, and `no-restricted-syntax`
-  only limits function exports to those methods and `generateStaticParams`; the base
-  enum and `| undefined` bans do not apply in those files.
-- `functional/no-loop-statements` stays on in route handlers; build the response with
-  `map` or `reduce`.
+- Route handlers (`app/**/route.{js,jsx,ts}`) may export `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE` and `OPTIONS` as functions. Any other name keeps the base naming rule, so `FETCH`, `Get`, a non-exported `GET`, or `GET` outside a route file still fail. `route.tsx` follows the `.tsx` rule, which accepts PascalCase functions, so `GET` passes there.
+- Under `app/api/**/route.*`, the naming rule is off, and `no-restricted-syntax` only limits function exports to those methods and `generateStaticParams`.
+- `functional/no-loop-statements` stays on in route handlers.
 - `.next/`, `out/`, `build/` and `next-env.d.ts` are ignored.
-- `max-lines-per-function` is off in pages and layouts.
+- `max-lines-per-function` is off in `app/**/page.*` and `app/**/layout.*`.
 
-In every preset, object and type property names that need quotes (`'content-type'`,
-`'@type'`, `'x-default'`) are exempt from the naming convention, because an external
-format fixes their spelling. Names that do not need quotes (`user_id`) are still checked
-wherever the full naming rule applies (not in React and Next.js `.tsx` files, `*.decorator.ts` in
-React, Next.js and Node.js, or Next.js `app/api/**/route.*`).
+### nodejs
 
-### Opt-in
+Everything in `base`, plus the overrides `react` and `nextjs` also have for these files: `@typescript-eslint/no-unsafe-member-access` and `max-lines-per-function` are off in `*.test.ts`, `*.spec.ts` and `*.e2e.ts`, and `*.decorator.ts` files check only function names.
 
-| Preset     | Plugin                                                                                                      |
-| ---------- | ----------------------------------------------------------------------------------------------------------- |
-| Turbo      | [eslint-plugin-turbo](https://turbo.build/repo/docs/reference/eslint-plugin-turbo) cache rules              |
-| Boundaries | [eslint-plugin-boundaries](https://github.com/javierbrea/eslint-plugin-boundaries) recommended rules; define `settings['boundaries/elements']` in your config, since with none nothing is enforced |
+### convex
 
----
+| Rule | Catches |
+| --- | --- |
+| `@convex-dev/no-old-registered-function-syntax` | Deprecated function syntax |
+| `@convex-dev/require-args-validator` | Missing `args` validator |
+| `@convex-dev/explicit-table-ids` | Implicit table ID types |
+| `@convex-dev/import-wrong-runtime` | Node.js imports in Convex runtime files |
+| `convex-rules/standard-filenames` | Factories outside `queries.ts`, `mutations.ts`, `actions.ts`, `internal_mutations.ts`, `node_actions.ts` |
+| `convex-rules/namespace-separation` | `query()` in `mutations.ts`, `mutation()` in `queries.ts` |
+| `convex-rules/snake-case-filenames` | Non-`snake_case` filenames in `convex/` (hyphens, camelCase); names starting uppercase are exempt |
+| `convex-rules/no-bare-v-any` | `v.any()` outside `validators.ts` |
+| `convex-rules/require-returns-validator` | Missing `returns` validator in a factory config |
+| `convex-rules/no-query-in-loop` | `ctx.db.query`, `ctx.db.get` or `ctx.runQuery` inside a loop |
+| `convex-rules/no-filter-on-query` | `.filter()` on a query chain (use `.withIndex()`) |
 
-## Convex preset
+`@typescript-eslint/explicit-module-boundary-types` is also on for Convex sources.
 
-The Convex preset enforces backend best practices with **4 official rules** + **7 custom rules** bundled as `eslint-plugin-convex-rules`.
+- Applies to `**/convex/**/*.ts` and `**/src/component/**/*.ts`.
+- `_generated/`, `*.test.ts` and `testing/` are excluded from these rules; other presets in your config still apply.
+- `auth.ts`, `auth.config.ts` and `convex.config.ts` are exempt from `snake-case-filenames` and `explicit-module-boundary-types`.
+- `migrations/` is exempt from `standard-filenames`, `namespace-separation` and `no-query-in-loop`.
 
-### Setup
+The file layout the rules expect:
 
-```js
-// Standalone
-import { convex } from "@vllnt/eslint-config/convex";
-
-export default [...convex];
-```
-
-```js
-// With base (recommended)
-import { base } from "@vllnt/eslint-config";
-import { convex } from "@vllnt/eslint-config/convex";
-
-export default [...base, ...convex];
-```
-
-### Official rules (`@convex-dev`)
-
-| Rule                                | Catches                                        |
-| ----------------------------------- | ---------------------------------------------- |
-| `no-old-registered-function-syntax` | Deprecated function syntax                     |
-| `require-args-validator`            | Missing `args` validator                       |
-| `explicit-table-ids`                | Implicit table ID types                        |
-| `import-wrong-runtime`              | Wrong runtime imports (Node in Convex runtime) |
-
-### Custom rules (`convex-rules`)
-
-| Rule                        | Catches                                                      |
-| --------------------------- | ------------------------------------------------------------ |
-| `standard-filenames`        | Factories outside `queries.ts`, `mutations.ts`, `actions.ts`, `internal_mutations.ts`, `node_actions.ts` |
-| `namespace-separation`      | `query()` in `mutations.ts`, `mutation()` in `queries.ts`    |
-| `snake-case-filenames`      | Non-`snake_case` filenames in `convex/` (hyphens, camelCase); names starting uppercase are exempt |
-| `no-bare-v-any`             | `v.any()` outside `validators.ts`                            |
-| `require-returns-validator` | Missing `returns` validator in factory config                |
-| `no-query-in-loop`          | N+1 queries (`ctx.db.query`/`get`/`runQuery` inside loops)   |
-| `no-filter-on-query`        | `.filter()` on query chains (use `.withIndex()`)             |
-
-### Auto-applied overrides
-
-- **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts` at the root of `convex/` or `src/component/`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
-- **Migration files** (`convex/migrations/**`) — exempt from `standard-filenames`, `namespace-separation`, `no-query-in-loop`
-- **Generated/test files** (`convex/_generated/**`, `*.test.ts`, `convex/testing/**`) — excluded from the Convex rules (other presets in your config still apply)
-- Sandboxed component sources under `src/component/**` receive the same rules and exclusions, except `snake-case-filenames`, which only checks files under `convex/`.
-
-### Project-specific overrides
-
-```js
-import { base } from "@vllnt/eslint-config";
-import { convex } from "@vllnt/eslint-config/convex";
-
-export default [
-  ...base,
-  ...convex,
-
-  // Exempt "use node" action files from import-wrong-runtime
-  {
-    files: ["convex/agents/actions.ts"],
-    rules: { "@convex-dev/import-wrong-runtime": "off" },
-  },
-];
-```
-
-### Enforced file structure
-
-```
+```text
 convex/
   {domain}/
     queries.ts              query(), internalQuery()
@@ -355,27 +144,119 @@ convex/
   migrations/               relaxed rules
 ```
 
----
+### turbo
 
-## Peer dependencies
+[eslint-plugin-turbo](https://turbo.build/repo/docs/reference/eslint-plugin-turbo) recommended rules (`turbo/no-undeclared-env-vars`). Spread it after a language preset.
 
-| Package                         | Required                                       |
-| ------------------------------- | ---------------------------------------------- |
-| `eslint` >= 9                   | Yes (tested on 9 and 10, later majors untested; on 10, eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 print a peer warning because their own ranges stop at 9) |
-| `prettier` >= 3                 | Yes                                            |
-| `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
+### boundaries
 
-Install `@typescript/native` as `npm:typescript@^7.0.2` when using TypeScript 7
-as the build compiler.
+[eslint-plugin-boundaries](https://github.com/javierbrea/eslint-plugin-boundaries) recommended settings and rules. It enforces nothing until you define `settings["boundaries/elements"]`; see [Common tasks](#enforce-architecture-boundaries).
 
-ESLint 10 removed rule-context methods such as `context.getSourceCode()`, which
-eslint-plugin-write-good-comments, eslint-plugin-react and eslint-plugin-css-modules still
-call. The presets add them back for those plugins' rules with `fixupRule` from
-`@eslint/compat`, so the same presets run on ESLint 9 and 10.
+### playwright
 
-## VS Code
+An overlay: spread it after a language preset, which registers the plugins and rules it adjusts. It applies to `**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and `**/playwright.config.{ts,mts}`.
 
-Add to `.vscode/settings.json` for monorepo support:
+| Rule | Change | Why |
+| --- | --- | --- |
+| `functional/no-loop-statements` | off | Tests and projects are generated per viewport, locale or route |
+| `max-lines-per-function` | off | A `describe` block or setup step covers a whole page or sign-in flow |
+| `@typescript-eslint/naming-convention` | object literal keys unchecked | Expected-data tables use the page's labels and the API's field names as keys |
+
+Everything else stays on, including `write-good-comments` and `unicorn/prevent-abbreviations`. Helpers in `tests/e2e/` that are not `*.spec.ts` or `*.setup.ts` keep every rule.
+
+### ignores
+
+Ignores `coverage/`, `playwright-report/`, `test-results/`, `.turbo/` and `.worktrees/` at any depth, and `dist/` and `build/` at the config root, so a source folder with one of those names deeper in the tree is still linted. ESLint already ignores `node_modules/` and `.git/`; `nextjs` adds its own output.
+
+## Common tasks
+
+### Combine presets
+
+```js
+import { ignores } from "@vllnt/eslint-config/ignores";
+import { nextjs } from "@vllnt/eslint-config/nextjs";
+import { playwright } from "@vllnt/eslint-config/playwright";
+import { turbo } from "@vllnt/eslint-config/turbo";
+
+export default [...ignores, ...nextjs, ...turbo, ...playwright];
+```
+
+### Change a rule
+
+Presets take no options. Append a config object; later objects win.
+
+```js
+import { nodejs } from "@vllnt/eslint-config/nodejs";
+
+export default [
+  ...nodejs,
+  {
+    rules: {
+      "max-lines-per-function": ["error", { max: 50 }],
+    },
+  },
+];
+```
+
+### Lint a Convex backend
+
+```js
+import { base } from "@vllnt/eslint-config";
+import { convex } from "@vllnt/eslint-config/convex";
+
+export default [
+  ...base,
+  ...convex,
+  {
+    files: ["convex/agents/actions.ts"],
+    rules: { "@convex-dev/import-wrong-runtime": "off" },
+  },
+];
+```
+
+### Enforce architecture boundaries
+
+```js
+import { boundaries } from "@vllnt/eslint-config/boundaries";
+import { nodejs } from "@vllnt/eslint-config/nodejs";
+
+export default [
+  ...nodejs,
+  ...boundaries,
+  {
+    settings: {
+      "boundaries/elements": [
+        { pattern: "src/features/*", type: "feature" },
+        { pattern: "src/shared/*", type: "shared" },
+      ],
+    },
+  },
+];
+```
+
+### Inspecting and profiling ESLint
+
+Run these from the consuming project's root so they use its local ESLint, config and TypeScript project.
+
+```sh
+pnpm exec eslint --inspect-config
+```
+
+This opens the Config Inspector for the project's config file; it takes no file argument. Use its file view to see which config objects match a path and the final rule options. It explains configuration; it does not measure performance.
+
+```sh
+TIMING=1 pnpm exec eslint .
+```
+
+`TIMING=1` prints the ten rules with the highest total time (`TIMING=all` prints every rule). Type-aware rules share the one-time cost of creating a TypeScript program, so the top rule in one cold run is not proof of the cause.
+
+```sh
+pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json
+```
+
+The JSON keeps each file's parse, fix and per-rule timings. Delete or gitignore the report; it contains local paths. When you compare runs, use the CI file set without `--fix` and without ESLint's cache, and run more than once. See ESLint's docs on the [Config Inspector](https://eslint.org/docs/latest/use/configure/debug#use-the-config-inspector), [rule profiling](https://eslint.org/docs/latest/extend/custom-rules#profile-rule-performance) and [stats](https://eslint.org/docs/latest/extend/stats).
+
+### Use the ESLint extension for VS Code in a monorepo
 
 ```json
 {
@@ -383,30 +264,82 @@ Add to `.vscode/settings.json` for monorepo support:
 }
 ```
 
-## Documentation and support
+Put this in `.vscode/settings.json`.
 
-- [LLM index](llms.txt) · [Changelog](CHANGELOG.md)
-- [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
-- [Security policy and private vulnerability reporting](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md)
+## Errors and fixes
 
-Stable releases use the npm `latest` tag. `@canary` selects moving prerelease
-builds; pin and test them before adoption.
+Messages that the presets and the bundled `convex-rules` report, and errors from common setup mistakes.
+
+| Message or code | Cause | Fix |
+| --- | --- | --- |
+| `Prefer union type` (`no-restricted-syntax`) | An `enum` declaration | Use a union of string literals |
+| `` Optional properties already include undefined; drop the union and prefer `?:`. `` (`no-restricted-syntax`) | `name?: string \| undefined` | Write `name?: string` |
+| `` Use optional properties instead of unions with `undefined` (e.g. `email?: string`). `` (`no-restricted-syntax`) | `name: string \| undefined` | Write `name?: string` |
+| `Only the HTTP method handlers (GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS) and generateStaticParams may be exported as functions from route.ts` (`no-restricted-syntax`, `nextjs`) | Another exported function in `app/api/**/route.*` | Move the helper to another module, or do not export it |
+| `wrongFilename` (`convex-rules/standard-filenames`) | A Convex factory (`query`, `mutation`, `action` or an internal variant) exported from a file not named `queries.ts`, `mutations.ts`, `actions.ts`, `internal_mutations.ts` or `node_actions.ts` | Move it to the matching file |
+| `wrongNamespace` (`convex-rules/namespace-separation`) | A factory of one kind in another kind's file, such as `query()` in `mutations.ts` | Move it to its own file |
+| `notSnakeCase` (`convex-rules/snake-case-filenames`) | A file in `convex/` with hyphens or camelCase in its name | Rename it as the message suggests (`my-file.ts` to `my_file.ts`) |
+| `noBareVAny` (`convex-rules/no-bare-v-any`) | `v.any()` outside `validators.ts` | Define a named alias in `validators.ts` and import it |
+| `missingReturns` (`convex-rules/require-returns-validator`) | A Convex function without a `returns` validator | Add `returns: v.…` to the function config |
+| `noQueryInLoop` (`convex-rules/no-query-in-loop`) | `ctx.db.query`, `ctx.db.get` or `ctx.runQuery` inside a loop | Batch the reads, for example one indexed query or `Promise.all` over the ids |
+| `noFilterOnQuery` (`convex-rules/no-filter-on-query`) | `.filter()` on a database query | Add an index and use `.withIndex()` |
+| `Parsing error: <file> was not found by the project service` | A linted `.ts` or `.tsx` file is not in any `tsconfig.json` | Add it to `include` in a `tsconfig.json`, or ignore it in your config |
+| `SyntaxError: The requested module '@vllnt/eslint-config' does not provide an export named 'default'` | A default import from the root entry | Use a named import (`import { base } from "@vllnt/eslint-config"`) or a subpath default |
+| `could not find plugin "@typescript-eslint"` | `playwright` (or another addition) used without a language preset | Spread a language preset first: `[...nextjs, ...playwright]` |
+| `Cannot redefine plugin "<name>"` | Your config registers a different object for a plugin the preset already registers, such as a copy wrapped with `fixupPluginRules` | Register the same import as the preset, or drop your registration and only set rules |
+| `[boundaries]: Please provide element types using the 'boundaries/elements' setting` | `boundaries` without element settings | Add `settings["boundaries/elements"]` ([example](#enforce-architecture-boundaries)) |
+| `TypeError: context.getSourceCode is not a function` (`write-good-comments`) | `@vllnt/eslint-config` 2.1.x or older on ESLint 10 | Upgrade to 2.2.0 or later |
+
+## Limits and gotchas
+
+- Presets take no options, and every rule is `error`; there are no warnings. Change rules by appending config objects.
+- Every linted `.ts` and `.tsx` file must be in a `tsconfig.json` (`projectService: true`). The `typescript` package must be the TypeScript 6.0 JavaScript API (`>=6.0.2 <6.1`).
+- `turbo`, `boundaries`, `playwright` and `ignores` are additions, not language presets. `playwright` fails on its own; spread it after a language preset.
+- `boundaries` enforces nothing until `settings["boundaries/elements"]` is set.
+- In `react` and `nextjs`, `.tsx` and `*.decorator.ts` files check only function names, and `nodejs` does the same for `*.decorator.ts`; variables, types and properties there are not checked. `base` applies the full naming rule everywhere.
+- Under Next.js `app/api/**/route.*`, the naming rule is off and the enum and `| undefined` bans do not apply.
+- css-modules is registered but no rule is on.
+- `convex-rules/snake-case-filenames` checks only files under `convex/`, not `src/component/`.
+- The four gaps above stay as they are in version 2, because closing them would fail code that lints clean today; they are tracked for 3.0.0 in [#31](https://github.com/vllnt/eslint-config/issues/31).
+- On ESLint 10, the rules of `eslint-plugin-write-good-comments`, `eslint-plugin-react` and `eslint-plugin-css-modules` run through `fixupRule` from `@eslint/compat`. The rules are replaced in place on the imported plugin object, so your own import of those plugins gets the same rules.
+
+## Compatibility
+
+| Package | Range | Notes |
+| --- | --- | --- |
+| `eslint` | `>=9` | Tested on 9 and 10; later majors are untested. On 10, `eslint-plugin-react` 7.37.5 and `eslint-plugin-jsx-a11y` 6.10.2 print a peer warning because their own ranges stop at 9 |
+| `prettier` | `>=3` | Required |
+| `typescript` | `>=6.0.2 <6.1` | The TypeScript 6 JavaScript API (`npm:@typescript/typescript6`). Needed by the root entry and `base`, `react`, `nextjs`, `nodejs` and `convex`; not by `turbo`, `boundaries`, `playwright` or `ignores` alone. TypeScript 5 is not supported |
+| `@typescript/native` | `npm:typescript@^7.0.2` | Optional: the TypeScript 7 compiler for `tsc` |
+| Node.js | `>=20` | CI runs Node 22 and 24. `@eslint/compat` declares `^20.19.0 \|\| ^22.13.0 \|\| >=24` |
+
+Every plugin is a dependency of this package; do not install them separately. ESM only (`"type": "module"`), with TypeScript declarations for every entry point.
+
+## Testing
+
+This repository runs `pnpm test`: export and shape checks, real ESLint runs over fixtures on ESLint 9 and 10, the Convex rule tests, the packed-tarball contents check and a docs check of this README. Nothing to set up in your project.
+
+## Security
+
+Report vulnerabilities privately as described in the [security policy](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md).
 
 ## Related packages
 
-| Package                                                          | Use it for                                                                                                                       |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Package | Use it for |
+| --- | --- |
 | [`@vllnt/typescript`](https://oss.vllnt.com/packages/typescript) | Shared `tsconfig` presets. Type-aware linting here reads your `tsconfig.json`; use that package to set the compiler options, this one to lint. |
 
-## Author
+## Contributing
 
-Built by [bntvllnt](https://github.com/bntvllnt) · [bntvllnt.com](https://bntvllnt.com).
-Part of [@vllnt](https://github.com/vllnt). [Sponsor the work](https://github.com/sponsors/bntvllnt).
+See [CONTRIBUTING.md](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md) and open [issues](https://github.com/vllnt/eslint-config/issues). The [LLM index](llms.txt) and the [changelog](CHANGELOG.md) ship with the package.
 
 ## License
 
 [MIT](LICENSE)
 
+Built by [bntvllnt](https://github.com/bntvllnt) · [bntvllnt.com](https://bntvllnt.com).
+Part of [@vllnt](https://github.com/vllnt). [Sponsor the work](https://github.com/sponsors/bntvllnt).
+
 ---
 
-Part of vllnt oss: https://oss.vllnt.com
+Part of [vllnt open source](https://oss.vllnt.com) · [Package page](https://oss.vllnt.com/packages/eslint-config) · [vllnt.com](https://vllnt.com) · Built by [bntvllnt](https://bntvllnt.com)

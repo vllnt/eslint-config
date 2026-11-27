@@ -7,6 +7,9 @@ import { unicornConfig, unicornTsx, unicornFilename } from './core/unicorn.js'
 import { typescriptConfig, typescriptTsx, typescriptTest, typescriptDecorator } from './core/typescript.js'
 import { reactConfig } from './core/react.js'
 
+/**
+ * React preset: everything in `base` plus eslint-plugin-react, react-hooks and jsx-a11y, with `.tsx` overrides.
+ */
 export const react = tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,

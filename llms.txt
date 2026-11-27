@@ -1,14 +1,12 @@
 # @vllnt/eslint-config
 
-> Strict, opinionated ESLint flat config for TypeScript projects. Every rule enforces error — no warnings, no compromises.
+> ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at `error`.
 
-ESLint v9+ flat config with 8 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries, Playwright, plus a shared `ignores` list. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
-
-Version 2 requires ESLint >=9 (tested on 9 and 10), Prettier >=3, and the TypeScript 6 JavaScript API
-(`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting. Use
-`@typescript/native@npm:typescript@^7.0.2` alongside it for the TypeScript 7 compiler.
-TypeScript 5 is not supported. Stable releases use the npm `latest` tag; `canary`
-builds are moving prereleases. See the README installation command.
+Version 2 needs ESLint >=9 (tested on 9 and 10), Prettier >=3, and the TypeScript 6
+JavaScript API (`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting.
+Use `@typescript/native@npm:typescript@^7.0.2` alongside it for the TypeScript 7 compiler.
+TypeScript 5 is not supported. Every plugin is a dependency of the package. Stable
+releases use the npm `latest` tag; `canary` builds are moving prereleases.
 
 ## For coding agents
 
@@ -16,58 +14,70 @@ The docs ship inside the package, in `node_modules/@vllnt/eslint-config/`:
 `README.md`, `llms.txt` and `CHANGELOG.md`. They match the installed version.
 Read them before writing or changing an ESLint config that uses this package.
 
+## When to use
+
+- Use it for a TypeScript project on ESLint 9 or 10 flat config that wants type-aware
+  `typescript-eslint` rules, Prettier and import sorting as errors, in React, Next.js,
+  Node.js or Convex code, optionally with Turborepo, Playwright or boundaries rules.
+- Do not use it when you need warnings or per-preset options (presets take no options;
+  every rule is `error`), for `.eslintrc` (ESLint 8 or older), or for type-aware
+  linting on TypeScript 5. Compose `typescript-eslint` configs and plugins directly then.
+
 ## Entry points
 
-Each entry point exports an array of flat config objects with the same name.
-Subpaths also have a default export; the root entry has named exports only.
-`./package.json` is exported for tooling. Presets take no options; spread them and
-append config objects to override rules.
+Each entry point exports an array of flat config objects with the same name. Spread it
+into `eslint.config.js` and append config objects to change rules. Subpaths also have a
+default export; the root entry has named exports only. Full table:
+[API reference](./README.md#api).
 
 - `@vllnt/eslint-config`: `base` (and every preset below as a named export)
 - `@vllnt/eslint-config/nextjs`: `nextjs`
 - `@vllnt/eslint-config/react`: `react`
 - `@vllnt/eslint-config/nodejs`: `nodejs`
 - `@vllnt/eslint-config/convex`: `convex`
-- `@vllnt/eslint-config/turbo`: `turbo` (opt-in addition)
-- `@vllnt/eslint-config/boundaries`: `boundaries` (opt-in addition)
-- `@vllnt/eslint-config/playwright`: `playwright` (opt-in overlay)
-- `@vllnt/eslint-config/ignores`: `ignores` (opt-in)
+- `@vllnt/eslint-config/turbo`: `turbo` (addition)
+- `@vllnt/eslint-config/boundaries`: `boundaries` (addition; needs `settings["boundaries/elements"]`)
+- `@vllnt/eslint-config/playwright`: `playwright` (overlay; spread after a language preset)
+- `@vllnt/eslint-config/ignores`: `ignores`
 
-## Next.js, Playwright and ignores
+```js
+// eslint.config.js
+import { nextjs } from "@vllnt/eslint-config/nextjs";
 
-The Next.js preset accepts route handler exports (`GET`, `HEAD`, `POST`, `PUT`,
-`PATCH`, `DELETE`, `OPTIONS`) by exact name and ignores `.next/`, `out/`, `build/` and
-`next-env.d.ts`. `@vllnt/eslint-config/playwright` is an opt-in overlay for
-`**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and
-`**/playwright.config.{ts,mts}` that relaxes
-`functional/no-loop-statements`, `max-lines-per-function` and object-key naming
-only. `@vllnt/eslint-config/ignores` is a shared ignores list. See
-[README](./README.md#playwright) and [Shared ignores](./README.md#shared-ignores).
+export default [...nextjs];
+```
+
+## Errors and limits
+
+Every message the presets and the bundled `convex-rules` report, with its cause and fix:
+[Errors and fixes](./README.md#errors-and-fixes). Hard limits and rules that silently do
+nothing (`.tsx` naming, `app/api` routes, css-modules, `src/component/` filenames):
+[Limits and gotchas](./README.md#limits-and-gotchas). Peer ranges:
+[Compatibility](./README.md#compatibility).
 
 ## Diagnostics
 
-The package uses ESLint v9+ flat config and needs no extra dependency for the
-built-in Config Inspector. From a consuming project, open the inspector with
-`pnpm exec eslint --inspect-config` (it downloads on demand and takes no file
-argument; pick files in its UI), profile aggregate rule time
-with `TIMING=1 pnpm exec eslint .`, or capture per-file parse and rule timings
-with `pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json`.
-The inspector explains the effective config but does not measure performance.
-See [Inspecting and profiling ESLint](./README.md#inspecting-and-profiling-eslint)
-for interpretation and benchmarking practices.
+From a consuming project, `pnpm exec eslint --inspect-config` opens the Config Inspector,
+`TIMING=1 pnpm exec eslint .` prints the slowest rules, and
+`pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json`
+records per-file parse and rule timings. See
+[Inspecting and profiling ESLint](./README.md#inspecting-and-profiling-eslint).
 
 ## Docs
 
-- [README](./README.md): Project overview, presets, installation, diagnostics, and usage guide
-- [Changelog](./CHANGELOG.md): Version history and release notes
+- [README](./README.md): install, quick start, API, common tasks, errors, limits, compatibility
+- [Changelog](./CHANGELOG.md): version history and release notes
 - [License](./LICENSE): MIT license
 
 ## Optional
 
-- [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md): Contribution guidelines and development setup
-- [Security Policy](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md): Vulnerability reporting and disclosure policy
-- [Code of Conduct](https://github.com/vllnt/eslint-config/blob/main/CODE_OF_CONDUCT.md): Community guidelines
+- [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md): contribution guidelines and development setup
+- [Security Policy](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md): vulnerability reporting and disclosure policy
+- [Code of Conduct](https://github.com/vllnt/eslint-config/blob/main/CODE_OF_CONDUCT.md): community guidelines
 
 ## Ecosystem
 
-- [vllnt oss](https://oss.vllnt.com/llms.txt): Index of the open-source @vllnt packages
+- [Package page](https://oss.vllnt.com/packages/eslint-config)
+- [All @vllnt packages](https://oss.vllnt.com/llms.txt)
+- [vllnt](https://vllnt.com/llms.txt)
+- [Author](https://bntvllnt.com)

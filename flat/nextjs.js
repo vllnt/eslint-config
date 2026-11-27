@@ -23,6 +23,9 @@ const httpMethodPattern = HTTP_METHODS.join('|')
 const routeFunctionPattern = [...HTTP_METHODS, 'generateStaticParams'].join('|')
 const routeExportMessage = `Only the HTTP method handlers (${HTTP_METHODS.join(', ')}) and generateStaticParams may be exported as functions from route.ts`
 
+/**
+ * Next.js preset: everything in `react` plus @next/eslint-plugin-next (recommended and core web vitals at `error`), App Router route handler names and Next.js build output ignores.
+ */
 export const nextjs = tseslint.config(
   {
     // Next.js build output and generated files: the defaults of `eslint-config-next`.

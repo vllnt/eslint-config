@@ -4,6 +4,9 @@
 // root so a source folder with that name deeper in the tree stays linted.
 // ESLint already ignores `**/node_modules/` and `.git/`. The Next.js preset
 // adds `.next`, `out` and `next-env.d.ts` itself.
+/**
+ * Shared ignores for tool output: `coverage/`, `playwright-report/`, `test-results/`, `.turbo/` and `.worktrees/` at any depth, and `dist/` and `build/` at the config root.
+ */
 export const ignores = [
   {
     ignores: [

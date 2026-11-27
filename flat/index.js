@@ -1,3 +1,10 @@
+/**
+ * @vllnt/eslint-config: ESLint flat config presets. Each named export is an array of
+ * flat config objects; spread it into `eslint.config.js`.
+ *
+ * @packageDocumentation
+ * @see https://oss.vllnt.com/packages/eslint-config
+ */
 export { nextjs } from './nextjs.js'
 export { convex } from './convex.js'
 export { nodejs } from './nodejs.js'
