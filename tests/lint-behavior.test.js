@@ -80,9 +80,13 @@ describe(`ESLint ${ESLint.version}: plugins written for older ESLint APIs run`, 
     ]);
   });
 
-  it("react: a .tsx file lints with eslint-plugin-react", async () => {
-    const results = await lintFixtures(["react"], ["pass/app/og/route.tsx"]);
+  it("react: eslint-plugin-react passes a clean .tsx file and reports a near-miss", async () => {
+    const results = await lintFixtures(
+      ["react"],
+      ["pass/app/og/route.tsx", "fail/lib/untyped-button.tsx"],
+    );
     assertClean(results, "pass/app/og/route.tsx");
+    assertRules(results, "fail/lib/untyped-button.tsx", ["react/button-has-type"]);
   });
 
   it("react: a project can register its own eslint-plugin-react next to the preset", async () => {

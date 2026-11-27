@@ -361,7 +361,7 @@ convex/
 
 | Package                         | Required                                       |
 | ------------------------------- | ---------------------------------------------- |
-| `eslint` >= 9                   | Yes (tested on 9 and 10; on 10, eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 print a peer warning because their own ranges stop at 9) |
+| `eslint` >= 9                   | Yes (tested on 9 and 10, later majors untested; on 10, eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 print a peer warning because their own ranges stop at 9) |
 | `prettier` >= 3                 | Yes                                            |
 | `typescript` >= 6.0.2 and < 6.1 | Yes for the root entry and the Base, React, Next.js, Node.js and Convex presets (type-aware linting through `typescript-eslint`); not needed when you import only Turbo, Boundaries, Playwright or ignores |
 
