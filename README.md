@@ -34,6 +34,12 @@ Version 2 follows the official TypeScript 7 side-by-side migration arrangement:
 JavaScript API through the canonical `typescript` package. TypeScript 5 is no
 longer supported.
 
+## For coding agents
+
+The docs ship inside the package, in `node_modules/@vllnt/eslint-config/`:
+`README.md`, `llms.txt` and `CHANGELOG.md`. They match the installed version.
+Read them before writing or changing an ESLint config that uses this package.
+
 ## Quick start
 
 ```js
@@ -43,7 +49,9 @@ import { nextjs } from "@vllnt/eslint-config/nextjs";
 export default [...nextjs];
 ```
 
-Each preset is an array — spread it into your flat config. Base and its React,
+Each preset is an array — spread it into your flat config. Presets take no options;
+change a rule by appending your own config object (see below). The root entry has
+named exports only; each subpath also has a default export. Base and its React,
 Next.js, and Node.js variants enable `projectService: true` for type-aware linting.
 Convex also enables it; Turbo, Boundaries and Playwright are opt-in additions, not
 replacements for a language preset.
@@ -206,7 +214,7 @@ and [stats data](https://eslint.org/docs/latest/extend/stats).
 | [@eslint/js](https://eslint.org/docs/latest/rules/)                                               | ESLint recommended rules                     |
 | [typescript-eslint](https://typescript-eslint.io/)                                                | `strictTypeChecked` + `stylisticTypeChecked` |
 | [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier)                      | Prettier as ESLint errors                    |
-| [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Import/object/type sorting                   |
+| [eslint-plugin-perfectionist](https://perfectionist.dev/)                                         | Object, type, union, JSX prop, export sorting |
 | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                    | Modern JS best practices                     |
 | [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort)    | Import ordering                              |
 | [eslint-plugin-functional](https://github.com/eslint-functional/eslint-plugin-functional)         | Functional patterns (no loops, readonly)     |
@@ -219,7 +227,7 @@ Plus: strict naming conventions (camelCase, PascalCase types, T-prefixed generic
 | Plugin                                                                          | What it does              |
 | ------------------------------------------------------------------------------- | ------------------------- |
 | [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react)        | Recommended + jsx-runtime |
-| [eslint-plugin-react-hooks](https://react.dev/reference/rules/rules-of-hooks)   | Rules of hooks            |
+| [eslint-plugin-react-hooks](https://react.dev/reference/rules/rules-of-hooks)   | `recommended-latest`: Rules of Hooks, exhaustive deps, React Compiler rules |
 | [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)  | Accessibility             |
 | [eslint-plugin-css-modules](https://github.com/atfzl/eslint-plugin-css-modules) | CSS module validation     |
 
@@ -242,7 +250,7 @@ Everything in React, plus:
 - `functional/no-loop-statements` stays on in route handlers; build the response with
   `map` or `reduce`.
 - `.next/`, `out/`, `build/` and `next-env.d.ts` are ignored.
-- Pages and layouts get a `max-lines-per-function` override.
+- `max-lines-per-function` is off in pages and layouts.
 
 In every preset, object and type property names that need quotes (`'content-type'`,
 `'@type'`, `'x-default'`) are exempt from the naming convention, because an external
@@ -303,7 +311,7 @@ export default [...base, ...convex];
 
 - **Config files** (`auth.ts`, `auth.config.ts`, `convex.config.ts`) — exempt from `snake-case-filenames` and `explicit-module-boundary-types`
 - **Migration files** (`convex/migrations/**`) — exempt from `standard-filenames`, `namespace-separation`, `no-query-in-loop`
-- **Generated/test files** (`convex/_generated/**`, `*.test.ts`, `convex/testing/**`) — excluded entirely
+- **Generated/test files** (`convex/_generated/**`, `*.test.ts`, `convex/testing/**`) — excluded from the Convex rules (other presets in your config still apply)
 - Sandboxed component sources under `src/component/**` receive the same rules and exclusions.
 
 ### Project-specific overrides
@@ -368,11 +376,17 @@ Add to `.vscode/settings.json` for monorepo support:
 ## Documentation and support
 
 - [LLM index](llms.txt) · [Changelog](CHANGELOG.md)
-- [Contributing](CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
-- [Security policy and private vulnerability reporting](SECURITY.md)
+- [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md) · [Issues](https://github.com/vllnt/eslint-config/issues)
+- [Security policy and private vulnerability reporting](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md)
 
 npm `latest` is stable `2.1.0` at this audit. `@canary` selects moving prerelease
 builds; pin and test them before adoption.
+
+## Related packages
+
+| Package                                                          | Use it for                                                                                                                       |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [`@vllnt/typescript`](https://oss.vllnt.com/packages/typescript) | Shared `tsconfig` presets. Type-aware linting here reads your `tsconfig.json`; use that package to set the compiler options, this one to lint. |
 
 ## Author
 
@@ -382,3 +396,7 @@ Part of [@vllnt](https://github.com/vllnt). [Sponsor the work](https://github.co
 ## License
 
 [MIT](LICENSE)
+
+---
+
+Part of vllnt oss: https://oss.vllnt.com

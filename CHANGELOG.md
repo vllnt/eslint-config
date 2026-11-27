@@ -12,10 +12,14 @@ Unreleased canary line. The npm `latest` tag remains 2.1.0 until a stable 2.1.1 
 
 - Privacy Guard CI check and a pre-publish package content check, so personal or private data is blocked before merge and before npm publish.
 - Privacy Guard is re-synced with the skills template so the required check can use an optional SHA baseline. This repository has no baseline, so the check stays full-history.
+- The npm package now ships `CHANGELOG.md` and `llms.txt` next to `README.md`, so coding agents can read docs that match the installed version from `node_modules/@vllnt/eslint-config/`. README and `llms.txt` each have a "For coding agents" note, and `llms.txt` links to the shipped files with relative paths and to the vllnt oss index.
+- A package-contents test runs `npm pack --dry-run` and fails when `README.md`, `LICENSE`, `CHANGELOG.md`, `llms.txt` or an `exports` target is missing from the tarball, when tests, scripts or contributor files (`AGENTS.md`, `CONTRIBUTING.md`) are packed, or when a relative link in `llms.txt` points outside the tarball.
+- `package.json` sets `homepage` to https://oss.vllnt.com/packages/eslint-config and adds the `flat-config`, `convex`, `playwright` and `turborepo` keywords.
 
 ### Changed
 
 - Development dependencies bumped within their majors (`@convex-dev/eslint-plugin` 5.0.1, `@next/eslint-plugin-next` 16.4.6, `eslint-plugin-perfectionist` 5.14.0, `eslint-plugin-turbo` 2.11.11, `convex` 1.50.0). No change to the published presets.
+- README: a "Related packages" section (`@vllnt/typescript`) and a vllnt oss footer; it now states that presets take no options and that only subpaths have a default export, describes the Perfectionist and React Hooks rule sets as configured, and links contributor docs that do not ship to GitHub. Lint rules are unchanged.
 - `package.json` is now 2.1.1 so canaries publish as `2.1.1-canary.<sha>`, which sorts above the 2.1.0 stable. The publish workflow also bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
 
 ## [2.1.0] - 2026-11-17

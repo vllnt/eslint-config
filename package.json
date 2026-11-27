@@ -5,6 +5,7 @@
   "description": "Strict ESLint config for TypeScript projects. All rules enforce error — no warnings.",
   "license": "MIT",
   "main": "./flat/index.js",
+  "homepage": "https://oss.vllnt.com/packages/eslint-config",
   "repository": {
     "type": "git",
     "url": "https://github.com/vllnt/eslint-config"
@@ -15,14 +16,20 @@
     "typescript",
     "react",
     "nextjs",
-    "prettier"
+    "prettier",
+    "flat-config",
+    "convex",
+    "playwright",
+    "turborepo"
   ],
   "engines": {
     "node": ">=20"
   },
   "packageManager": "pnpm@10.34.8",
   "files": [
-    "flat"
+    "flat",
+    "CHANGELOG.md",
+    "llms.txt"
   ],
   "exports": {
     ".": "./flat/index.js",
