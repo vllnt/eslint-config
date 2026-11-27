@@ -1,9 +1,9 @@
-import { after, describe, it } from "node:test";
+import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import convexRules from "../flat/convex-plugin.js";
 import * as presets from "../flat/index.js";
@@ -34,6 +34,7 @@ const SECTIONS = [
   "Security",
   "Related packages",
   "Contributing",
+  "Links",
   "License",
 ];
 
@@ -43,13 +44,33 @@ const FOOTER = [
   `Part of [vllnt open source](https://oss.vllnt.com) · [Package page](https://oss.vllnt.com/packages/${NAME}) · [vllnt.com](https://vllnt.com) · Built by [bntvllnt](https://bntvllnt.com)`,
 ];
 
+const REPO = `https://github.com/vllnt/${NAME}`;
+
+// The npm package page answers 403 to automated checks, so the shared Links
+// block leaves that one entry out (the brief drops any URL that does not answer 200).
+const LINKS = `## Links
+
+- Docs and changelog: [oss.vllnt.com/packages/${NAME}](https://oss.vllnt.com/packages/${NAME}) · [release feed](https://oss.vllnt.com/packages/${NAME}/rss.xml)
+- All @vllnt packages: [oss.vllnt.com](https://oss.vllnt.com) · [search packages and docs on index.vllnt.com](https://index.vllnt.com)
+- Source and issues: [GitHub](${REPO}) · [issues](${REPO}/issues)
+- Questions and updates: [Discord](https://bntvllnt.com/discord) · [X @bntvllnt](https://x.com/bntvllnt)
+- Company and author: [vllnt.com](https://vllnt.com) · [bntvllnt.com](https://bntvllnt.com) · [GitHub @bntvllnt](https://github.com/bntvllnt) · [LinkedIn](https://linkedin.com/in/bntvllnt)
+- Sponsor: [GitHub Sponsors](https://github.com/sponsors/bntvllnt)
+`;
+
 const ECOSYSTEM = `## Ecosystem
 
 - [Package page](https://oss.vllnt.com/packages/${NAME})
+- [Release feed](https://oss.vllnt.com/packages/${NAME}/rss.xml)
 - [All @vllnt packages](https://oss.vllnt.com/llms.txt)
+- [Search vllnt packages and docs](https://index.vllnt.com)
 - [vllnt](https://vllnt.com/llms.txt)
 - [Author](https://bntvllnt.com)
 `;
+
+// A clean source file for the example projects: every preset must pass it.
+const SAMPLE = "export const sum = (left: number, right: number): number => left + right;\n";
+const SAMPLE_TSCONFIG = `${JSON.stringify({ compilerOptions: { noEmit: true, skipLibCheck: true, strict: true }, include: ["src"] }, undefined, 2)}\n`;
 
 // Built from parts so this file does not contain the banned domain itself.
 const BANNED_DOMAIN = ["vllnt", "ai"].join(".");
@@ -103,6 +124,13 @@ describe("docs: package.json metadata", () => {
     assert.equal(new Set(PKG.keywords).size, PKG.keywords.length);
   });
 
+  it("README line 3, the llms.txt summary and the description are the same sentence", () => {
+    const summary = LLMS.split("\n").find((line) => line.startsWith("> "));
+    assert.equal(LINES[2], PKG.description);
+    assert.equal(summary, `> ${PKG.description}`);
+    assert.doesNotMatch(PKG.description, /`/);
+  });
+
   it("homepage, author, funding and bugs point at the right pages", () => {
     assert.equal(PKG.homepage, `https://oss.vllnt.com/packages/${NAME}`);
     assert.deepEqual(PKG.author, { name: "bntvllnt", url: "https://bntvllnt.com" });
@@ -150,9 +178,14 @@ describe("docs: README structure", () => {
     assert.deepEqual(LINES.slice(-4), [...FOOTER, ""]);
   });
 
-  it("links each related @vllnt package to its package page", () => {
-    const links = [...section(README, "Related packages").matchAll(/\[`?@vllnt\/([\w-]+)`?\]\(([^)]+)\)/g)];
-    assert.ok(links.length > 0);
+  it("has the exact shared Links block just before License", () => {
+    assert.equal(section(README, "Links").slice(1), LINKS);
+  });
+
+  it("links each related @vllnt package to its package page, or says there is none", () => {
+    const body = section(README, "Related packages");
+    const links = [...body.matchAll(/\[`?@vllnt\/([\w-]+)`?\]\(([^)]+)\)/g)];
+    if (links.length === 0) assert.match(body, /\n\nNone: [^\n]+\.\n/);
     for (const [, other, url] of links) {
       assert.equal(url, `https://oss.vllnt.com/packages/${other}`);
     }
@@ -178,23 +211,30 @@ describe("docs: code blocks", () => {
     }
   });
 
-  describe("every js example loads in ESLint against the package exports", () => {
-    // Inside the package directory, `@vllnt/eslint-config` resolves through
-    // the package's own `exports` map, as it does for a consumer.
-    const dir = join(ROOT, "tests", ".docs-examples");
-    after(() => rmSync(dir, { recursive: true, force: true }));
+  describe("every js example lints a sample project with zero errors", () => {
+    // Each example becomes the eslint.config.js of its own project, with a
+    // tsconfig.json and one clean source file, and ESLint lints the whole
+    // directory from there, as `pnpm exec eslint .` does for a consumer. Inside
+    // the package directory, `@vllnt/eslint-config` resolves through the
+    // package's own `exports` map.
+    const root = join(ROOT, "tests", ".docs-examples");
+    before(() => rmSync(root, { recursive: true, force: true }));
+    after(() => rmSync(root, { recursive: true, force: true }));
     blocks
       .filter(({ lang }) => lang === "js")
       .forEach(({ body }, index) => {
         it(`example ${index + 1}: ${body.split("\n").find((line) => line.startsWith("export"))}`, async () => {
-          mkdirSync(dir, { recursive: true });
-          const file = join(dir, `example-${index + 1}.mjs`);
-          writeFileSync(file, body);
-          const { default: config } = await import(pathToFileURL(file).href);
-          assert.ok(Array.isArray(config) && config.length > 0);
-          const eslint = new ESLint({ cwd: ROOT, overrideConfigFile: true, overrideConfig: config });
-          const resolved = await eslint.calculateConfigForFile(join(ROOT, "src", "index.ts"));
-          assert.ok(Object.keys(resolved.rules ?? {}).length > 0);
+          const dir = join(root, `example-${index + 1}`);
+          mkdirSync(join(dir, "src"), { recursive: true });
+          writeFileSync(join(dir, "eslint.config.js"), body);
+          writeFileSync(join(dir, "tsconfig.json"), SAMPLE_TSCONFIG);
+          writeFileSync(join(dir, "src", "index.ts"), SAMPLE);
+          const results = await new ESLint({ cwd: dir }).lintFiles(["."]);
+          const problems = results.flatMap(({ filePath, messages }) =>
+            messages.map(({ message, ruleId }) => `${relative(dir, filePath)}: ${ruleId ?? "fatal"}: ${message}`),
+          );
+          assert.deepEqual(problems, []);
+          assert.ok(results.some(({ filePath }) => filePath === join(dir, "src", "index.ts")), "src/index.ts was not linted");
         });
       });
   });
@@ -233,11 +273,14 @@ describe("docs: API and errors are complete", () => {
       }
     }
     const missing = [...messages].filter((message) => !errors.includes(message));
+    // Each convex-rules row names the messageId and the message ESLint prints,
+    // with every `{{name}}` placeholder written as `<name>`.
+    const rows = errors.split("\n");
     for (const [rule, { meta }] of Object.entries(convexRules.rules)) {
-      for (const messageId of Object.keys(meta.messages)) {
-        if (!errors.includes(`\`${messageId}\` (\`convex-rules/${rule}\`)`)) {
-          missing.push(`${rule}: ${messageId}`);
-        }
+      for (const [messageId, text] of Object.entries(meta.messages)) {
+        const row = rows.find((line) => line.includes(`\`${messageId}\` (\`convex-rules/${rule}\`)`));
+        const printed = text.replaceAll(/\{\{\s*(\w+)\s*\}\}/g, "<$1>");
+        if (!row?.includes(printed)) missing.push(`${rule}: ${messageId}: ${printed}`);
       }
     }
     assert.ok(messages.size > 0);
@@ -267,6 +310,12 @@ describe("docs: links and shipped files", () => {
     });
   }
 
+  it("llms.txt has When to use and links the API and errors tables", () => {
+    assert.ok(section(LLMS, "When to use").includes("- "));
+    assert.ok(LLMS.includes("](./README.md#api)"), "llms.txt must link ./README.md#api");
+    assert.ok(LLMS.includes("](./README.md#errors-and-fixes)"), "llms.txt must link ./README.md#errors-and-fixes");
+  });
+
   it("llms.txt ends with the Ecosystem block and names the oss index once", () => {
     assert.ok(LLMS.endsWith(ECOSYSTEM), "llms.txt must end with the Ecosystem block");
     assert.equal(LLMS.split("https://oss.vllnt.com/llms.txt").length - 1, 1);
@@ -287,10 +336,13 @@ describe("docs: links and shipped files", () => {
 describe("docs: TSDoc on every public export", () => {
   for (const name of Object.keys(presets)) {
     for (const extension of ["js", "d.ts"]) {
-      it(`flat/${name}.${extension} documents \`${name}\``, () => {
+      it(`flat/${name}.${extension} documents \`${name}\` with a summary line`, () => {
         const source = readFileSync(join(ROOT, "flat", `${name}.${extension}`), "utf8");
         const declaration = extension === "js" ? `export const ${name} =` : `export declare const ${name}:`;
-        assert.match(source, new RegExp(`\\*/\\n${declaration.replaceAll(" ", "\\s")}`));
+        const comment = source.match(new RegExp(`/\\*\\*\\n((?: \\*.*\\n)*?) \\*/\\n${declaration.replaceAll(" ", "\\s")}`));
+        assert.ok(comment, `no TSDoc block directly above \`${declaration}\``);
+        const summary = comment[1].split("\n")[0].replace(/^ \*/, "").trim();
+        assert.ok(summary.length > 0 && !summary.startsWith("@"), `empty TSDoc summary line for \`${name}\``);
       });
     }
   }

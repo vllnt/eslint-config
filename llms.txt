@@ -1,6 +1,6 @@
 # @vllnt/eslint-config
 
-> ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at `error`.
+> ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at error.
 
 Version 2 needs ESLint >=9 (tested on 9 and 10), Prettier >=3, and the TypeScript 6
 JavaScript API (`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting.
@@ -36,7 +36,8 @@ default export; the root entry has named exports only. Full table:
 - `@vllnt/eslint-config/nodejs`: `nodejs`
 - `@vllnt/eslint-config/convex`: `convex`
 - `@vllnt/eslint-config/turbo`: `turbo` (addition)
-- `@vllnt/eslint-config/boundaries`: `boundaries` (addition; needs `settings["boundaries/elements"]`)
+- `@vllnt/eslint-config/boundaries`: `boundaries` (addition; needs `settings["boundaries/elements"]`,
+  `boundaries/element-types` options and an `import/resolver` that handles `.ts`)
 - `@vllnt/eslint-config/playwright`: `playwright` (overlay; spread after a language preset)
 - `@vllnt/eslint-config/ignores`: `ignores`
 
@@ -44,14 +45,21 @@ default export; the root entry has named exports only. Full table:
 // eslint.config.js
 import { nextjs } from "@vllnt/eslint-config/nextjs";
 
-export default [...nextjs];
+export default [{ ignores: ["eslint.config.js"] }, ...nextjs];
 ```
+
+The presets turn on `projectService` for every file ESLint lints, `.js` config files
+included, so every linted file must be in a `tsconfig.json` or ignored. Without the
+`ignores` entry, `eslint .` fails with `Parsing error: .../eslint.config.js was not found
+by the project service`.
 
 ## Errors and limits
 
-Every message the presets and the bundled `convex-rules` report, with its cause and fix:
+Every message this package defines (the presets' `no-restricted-syntax` messages and the
+bundled `convex-rules`), with its cause and fix, and common setup errors:
 [Errors and fixes](./README.md#errors-and-fixes). Hard limits and rules that silently do
-nothing (`.tsx` naming, `app/api` routes, css-modules, `src/component/` filenames):
+nothing (`.tsx` naming, `app/api` routes, css-modules, `src/component/` filenames,
+`boundaries` rules without options, TypeScript 5.9 from `@convex-dev/eslint-plugin`):
 [Limits and gotchas](./README.md#limits-and-gotchas). Peer ranges:
 [Compatibility](./README.md#compatibility).
 
@@ -78,6 +86,8 @@ records per-file parse and rule timings. See
 ## Ecosystem
 
 - [Package page](https://oss.vllnt.com/packages/eslint-config)
+- [Release feed](https://oss.vllnt.com/packages/eslint-config/rss.xml)
 - [All @vllnt packages](https://oss.vllnt.com/llms.txt)
+- [Search vllnt packages and docs](https://index.vllnt.com)
 - [vllnt](https://vllnt.com/llms.txt)
 - [Author](https://bntvllnt.com)

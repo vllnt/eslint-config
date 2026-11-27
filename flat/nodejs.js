@@ -7,7 +7,7 @@ import { unicornConfig, unicornFilename } from './core/unicorn.js'
 import { typescriptConfig, typescriptTest, typescriptDecorator } from './core/typescript.js'
 
 /**
- * Node.js preset: everything in `base` plus the test-file and `*.decorator.ts` overrides.
+ * Node.js preset: everything in `base` plus overrides for test files, `*.decorator.ts` naming and `unicorn/filename-case` (off for `*.tsx`, `*.animations.ts`, `*.settings.ts`, `*.stories.ts` and `*.types.ts`).
  */
 export const nodejs = tseslint.config(
   eslint.configs.recommended,

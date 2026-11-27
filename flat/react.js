@@ -8,7 +8,7 @@ import { typescriptConfig, typescriptTsx, typescriptTest, typescriptDecorator } 
 import { reactConfig } from './core/react.js'
 
 /**
- * React preset: everything in `base` plus eslint-plugin-react, react-hooks and jsx-a11y, with `.tsx` overrides.
+ * React preset: everything in `base` plus eslint-plugin-react, react-hooks and jsx-a11y, with overrides for `.tsx`, test files, `*.decorator.ts` naming and `unicorn/filename-case`.
  */
 export const react = tseslint.config(
   eslint.configs.recommended,
