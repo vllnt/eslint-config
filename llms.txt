@@ -2,10 +2,11 @@
 
 > ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at error.
 
-Version 2 needs ESLint >=9 (tested on 9 and 10), Prettier >=3, and the TypeScript 6
-JavaScript API (`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting.
-Use `@typescript/native@npm:typescript@^7.0.2` alongside it for the TypeScript 7 compiler.
-TypeScript 5 is not supported. Every plugin is a dependency of the package. Stable
+Version 2 declares the peers ESLint >=9 (tested on 9 and 10), Prettier >=3 and TypeScript
+`>=6.0.2 <6.1`, the TypeScript 6 JavaScript API, installed as
+`typescript@npm:@typescript/typescript6@^6.0.2`. Use `@typescript/native@npm:typescript@^7.0.2`
+alongside it for the TypeScript 7 compiler. TypeScript 5 is outside the `typescript` peer
+range and untested. Every plugin is a dependency of the package. Stable
 releases use the npm `latest` tag; `canary` builds are moving prereleases.
 
 ## For coding agents
@@ -21,7 +22,8 @@ Read them before writing or changing an ESLint config that uses this package.
   Node.js or Convex code, optionally with Turborepo, Playwright or boundaries rules.
 - Do not use it when you need warnings or per-preset options (presets take no options;
   every rule is `error`), for `.eslintrc` (ESLint 8 or older), or for type-aware
-  linting on TypeScript 5. Compose `typescript-eslint` configs and plugins directly then.
+  linting on a TypeScript version outside the `typescript` peer range `>=6.0.2 <6.1`, such
+  as TypeScript 5 (untested). Compose `typescript-eslint` configs and plugins directly then.
 
 ## Entry points
 
