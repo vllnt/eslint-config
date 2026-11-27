@@ -30,13 +30,14 @@ tests/
   eslint.js ← the ESLint under test: 9 by default, 10 with LINT_ESLINT=eslint10
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
   package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
+  docs.test.js ← README sections and order, examples, API and errors tables, footer, llms.txt, metadata and TSDoc
 ```
 
 ## Commands
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke, lint behavior, Convex rule and package contents tests on ESLint 9, then `pnpm test:eslint10` |
+| `pnpm test` | Smoke, lint behavior, Convex rule, package contents and docs tests on ESLint 9, then `pnpm test:eslint10` |
 | `pnpm test:eslint10` | Smoke, lint behavior and Convex rule tests on ESLint 10 (POSIX shell) |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
@@ -47,6 +48,7 @@ tests/
 - `flat/index.js` is the barrel that re-exports all presets
 - Custom Convex rules live in `flat/convex-rules/` and are bundled via `flat/convex-plugin.js`
 - Tests use `node:test` (no external test runner)
+- README.md keeps the section order, footer and tables that `tests/docs.test.js` checks; a new export or a new reported message needs a row in the README API or Errors and fixes table
 - A rule override or relaxation needs a fixture that lints clean and a near-miss that still fails, under `tests/fixtures/lint`, checked in `tests/lint-behavior.test.js`
 
 ## Conventions

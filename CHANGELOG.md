@@ -13,7 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Privacy Guard is re-synced with the skills template so the required check can use an optional SHA baseline. This repository has no baseline, so the check stays full-history.
 - The npm package now ships `CHANGELOG.md` and `llms.txt` next to `README.md`, so coding agents can read docs that match the installed version from `node_modules/@vllnt/eslint-config/`. README and `llms.txt` each have a "For coding agents" note, and `llms.txt` links to the shipped files with relative paths and to the vllnt oss index.
 - A package-contents test runs `npm pack --dry-run` and fails when `README.md`, `LICENSE`, `CHANGELOG.md`, `llms.txt` or an `exports` target is missing from the tarball, when tests, scripts or contributor files (`AGENTS.md`, `CONTRIBUTING.md`) are packed, or when a relative link in `llms.txt` points outside the tarball.
-- `package.json` sets `homepage` to https://oss.vllnt.com/packages/eslint-config and adds the `flat-config`, `convex`, `playwright` and `turborepo` keywords.
+- `package.json` sets `homepage` to https://oss.vllnt.com/packages/eslint-config, `author`, `funding` and `bugs`, a one-sentence `description` that names the stack, and 12 keywords.
+- Agent-first docs: the README follows the section order shared by @vllnt packages (When to use, Install, Quick start, an API table of every export with a reference per preset, Common tasks, an Errors and fixes table of every message the presets and `convex-rules` report, Limits and gotchas, Compatibility), and ends with the shared vllnt footer. `llms.txt` carries the same facts, links to the API and errors tables and ends with an Ecosystem block. Every public export has a TSDoc summary in its `.js` and `.d.ts`, and the entry point links the package page with `@see`. `tests/docs.test.js` checks all of this, and loads every README example in ESLint against the package exports.
 
 ### Fixed
 

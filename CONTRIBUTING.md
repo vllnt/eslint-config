@@ -33,6 +33,7 @@ tests/
   eslint.js ← the ESLint under test: 9 by default, 10 with LINT_ESLINT=eslint10
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
   package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
+  docs.test.js ← README sections and order, examples, API and errors tables, footer, llms.txt, metadata and TSDoc
 ```
 
 ### Adding a New Preset
