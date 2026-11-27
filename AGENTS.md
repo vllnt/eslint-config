@@ -28,13 +28,14 @@ tests/
   smoke.test.js ← export/shape/hygiene tests (node:test)
   lint-behavior.test.js ← real ESLint runs over tests/fixtures/lint (node:test)
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
+  package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
 ```
 
 ## Commands
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke, lint behavior and Convex rule tests |
+| `pnpm test` | Smoke, lint behavior, Convex rule and package contents tests |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture

@@ -4,21 +4,45 @@
 
 ESLint v9+ flat config with 8 presets: Base, React, Next.js, Node.js, Convex, Turbo, Boundaries, Playwright, plus a shared `ignores` list. TypeScript-first with `strictTypeChecked` + `stylisticTypeChecked`. Prettier built-in. 7 custom Convex lint rules bundled as `eslint-plugin-convex-rules`.
 
-Version 2 requires ESLint >=9, Prettier >=3, and the TypeScript 6 JavaScript API
+Version 2 requires ESLint >=9 (tested on 9), Prettier >=3, and the TypeScript 6 JavaScript API
 (`typescript@npm:@typescript/typescript6@^6.0.2`) for type-aware linting. Use
 `@typescript/native@npm:typescript@^7.0.2` alongside it for the TypeScript 7 compiler.
-TypeScript 5 is not supported. npm latest is stable 2.0.0 at this audit; canary
+TypeScript 5 is not supported. Stable releases use the npm `latest` tag; `canary`
 builds are moving prereleases. See the README installation command.
+
+## For coding agents
+
+The docs ship inside the package, in `node_modules/@vllnt/eslint-config/`:
+`README.md`, `llms.txt` and `CHANGELOG.md`. They match the installed version.
+Read them before writing or changing an ESLint config that uses this package.
+
+## Entry points
+
+Each entry point exports an array of flat config objects with the same name.
+Subpaths also have a default export; the root entry has named exports only.
+`./package.json` is exported for tooling. Presets take no options; spread them and
+append config objects to override rules.
+
+- `@vllnt/eslint-config`: `base` (and every preset below as a named export)
+- `@vllnt/eslint-config/nextjs`: `nextjs`
+- `@vllnt/eslint-config/react`: `react`
+- `@vllnt/eslint-config/nodejs`: `nodejs`
+- `@vllnt/eslint-config/convex`: `convex`
+- `@vllnt/eslint-config/turbo`: `turbo` (opt-in addition)
+- `@vllnt/eslint-config/boundaries`: `boundaries` (opt-in addition)
+- `@vllnt/eslint-config/playwright`: `playwright` (opt-in overlay)
+- `@vllnt/eslint-config/ignores`: `ignores` (opt-in)
 
 ## Next.js, Playwright and ignores
 
 The Next.js preset accepts route handler exports (`GET`, `HEAD`, `POST`, `PUT`,
 `PATCH`, `DELETE`, `OPTIONS`) by exact name and ignores `.next/`, `out/`, `build/` and
 `next-env.d.ts`. `@vllnt/eslint-config/playwright` is an opt-in overlay for
-`tests/e2e` specs, setup files and `playwright.config.ts` that relaxes
+`**/tests/e2e/**/*.{spec,setup}.ts`, `**/e2e/**/*.spec.ts` and
+`**/playwright.config.{ts,mts}` that relaxes
 `functional/no-loop-statements`, `max-lines-per-function` and object-key naming
 only. `@vllnt/eslint-config/ignores` is a shared ignores list. See
-[README](README.md#playwright) and [Shared ignores](README.md#shared-ignores).
+[README](./README.md#playwright) and [Shared ignores](./README.md#shared-ignores).
 
 ## Diagnostics
 
@@ -29,18 +53,21 @@ argument; pick files in its UI), profile aggregate rule time
 with `TIMING=1 pnpm exec eslint .`, or capture per-file parse and rule timings
 with `pnpm exec eslint . --stats --format json-with-metadata --output-file eslint-stats.json`.
 The inspector explains the effective config but does not measure performance.
-See [Inspecting and profiling ESLint](README.md#inspecting-and-profiling-eslint)
+See [Inspecting and profiling ESLint](./README.md#inspecting-and-profiling-eslint)
 for interpretation and benchmarking practices.
 
 ## Docs
 
-- [README](README.md): Project overview, presets, installation, diagnostics, and usage guide
-- [Contributing](CONTRIBUTING.md): Contribution guidelines and development setup
-- [Changelog](CHANGELOG.md): Version history and release notes
-- [Agents](AGENTS.md): AI agent instructions for working with this codebase
+- [README](./README.md): Project overview, presets, installation, diagnostics, and usage guide
+- [Changelog](./CHANGELOG.md): Version history and release notes
+- [License](./LICENSE): MIT license
 
 ## Optional
 
-- [Security Policy](SECURITY.md): Vulnerability reporting and disclosure policy
-- [Code of Conduct](CODE_OF_CONDUCT.md): Community guidelines
-- [License](LICENSE): MIT license
+- [Contributing](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUTING.md): Contribution guidelines and development setup
+- [Security Policy](https://github.com/vllnt/eslint-config/blob/main/SECURITY.md): Vulnerability reporting and disclosure policy
+- [Code of Conduct](https://github.com/vllnt/eslint-config/blob/main/CODE_OF_CONDUCT.md): Community guidelines
+
+## Ecosystem
+
+- [vllnt oss](https://oss.vllnt.com/llms.txt): Index of the open-source @vllnt packages
