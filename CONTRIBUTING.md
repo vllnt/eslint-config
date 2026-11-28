@@ -7,7 +7,7 @@ Thanks for your interest in contributing! This guide covers how to get started.
 1. Fork and clone the repo
 2. Install dependencies: `pnpm install`
 3. Run tests: `pnpm test` (type check, ESLint 9 and 10 runs, docs and script tests)
-4. Before a release change, run `pnpm test:package`: it installs the packed tarball in a clean project, as the publish workflow does
+4. Run `pnpm test:package`: it installs the packed tarball in a clean project, as CI does on every pull request and the publish workflow does before every publish
 
 ## Development
 

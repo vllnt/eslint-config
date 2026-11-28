@@ -47,7 +47,7 @@ tsconfig.json ← `pnpm typecheck` config for tests/*.js and scripts/*.mjs (not 
 | `pnpm typecheck` | Strict type check of `tests/*.js` and `scripts/*.mjs` with `tsc` (TypeScript 7) |
 | `pnpm test:eslint10` | Smoke, lint behavior and Convex rule tests on ESLint 10 (POSIX shell) |
 | `pnpm test:scripts` | Tests for the tarball content check (`scripts/test-check-package-contents.sh`) |
-| `pnpm test:package` | Packed tarball in a clean consumer: every `exports` entry loads, lints a clean and a failing sample, and type-checks, on ESLint 9 and 10; the publish workflow runs it before every publish |
+| `pnpm test:package` | Packed tarball in a clean consumer: every `exports` entry loads, lints a clean and a failing sample, and type-checks, on ESLint 9 and 10; CI runs it on every pull request and the publish workflow before every publish |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture
