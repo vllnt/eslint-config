@@ -31,7 +31,15 @@ ESLINT10="$(spec eslint10)"
 PRETTIER="$(spec prettier)"
 TYPESCRIPT="$(spec typescript)"
 NATIVE="$(spec @typescript/native)"
-RELEASE_AGE="$(node -p 'require(process.argv[1]).pnpm?.minimumReleaseAge ?? 0' "$ROOT/package.json")"
+# The consumer lives outside this repository, so pass on the repository's
+# minimum release age from pnpm-workspace.yaml.
+RELEASE_AGE="$(node -e '
+  const yaml = require("node:fs").readFileSync(process.argv[1], "utf8");
+  const match = /^minimumReleaseAge:\s*(\d+)\s*$/m.exec(yaml);
+  if (!match) process.exit(1);
+  console.log(match[1]);
+' "$ROOT/pnpm-workspace.yaml")" \
+  || { echo "FAIL  pnpm-workspace.yaml sets no minimumReleaseAge" >&2; exit 1; }
 
 (cd "$ROOT" && pnpm pack --pack-destination "$WORK" > "$WORK/pack.log" 2>&1) \
   || { echo "FAIL  pnpm pack"; cat "$WORK/pack.log"; exit 1; }

@@ -1,0 +1,4 @@
+# Install policy. pnpm 10 reads these settings here, not from package.json "pnpm".
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  - "@vllnt/*"
