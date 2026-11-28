@@ -1,3 +1,4 @@
+// @ts-check
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -50,6 +51,7 @@ describe("exports: default exports match named exports", () => {
 
 describe("exports: barrel re-exports all presets", () => {
   it(`index.js has all ${PRESETS.length} exports`, async () => {
+    /** @type {Record<string, unknown>} */
     const mod = await import("../flat/index.js");
     for (const { name } of PRESETS) {
       assert.ok(mod[name], `missing "${name}" from barrel`);
@@ -174,6 +176,7 @@ describe("hygiene: no leaked internal references", () => {
 });
 
 describe("package.json: required fields", () => {
+  /** @type {any} */
   let pkg;
 
   it("loads package.json", () => {
@@ -220,6 +223,7 @@ describe("package.json: required fields", () => {
   });
 });
 
+/** @param {string} dir @returns {string[]} */
 function collectFiles(dir) {
   const results = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -240,6 +244,7 @@ describe("rules: every configured rule id resolves to a registered rule", () => 
       const registered = overlay
         ? [...(await import("../flat/base.js")).base, ...mod[name]]
         : mod[name];
+      /** @type {Record<string, any>} */
       const plugins = {};
       for (const entry of registered) Object.assign(plugins, entry.plugins);
       const unresolved = [];

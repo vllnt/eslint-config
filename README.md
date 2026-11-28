@@ -166,7 +166,7 @@ convex/
 
 ### turbo addition
 
-[eslint-plugin-turbo](https://turbo.build/repo/docs/reference/eslint-plugin-turbo) recommended rules (`turbo/no-undeclared-env-vars`). Spread it after a language preset.
+[eslint-plugin-turbo](https://turborepo.dev/docs/reference/eslint-plugin-turbo) recommended rules (`turbo/no-undeclared-env-vars`). Spread it after a language preset.
 
 ### boundaries addition
 
@@ -402,7 +402,7 @@ Every plugin is a dependency of this package; do not install them separately. ES
 
 ## Testing
 
-This repository runs `pnpm test`: export and shape checks, real ESLint runs over fixtures on ESLint 9 and 10, the Convex rule tests, the packed-tarball contents check and a docs check of this README, which lints a sample project with every JavaScript example. Nothing to set up in your project.
+This repository runs `pnpm test`: export and shape checks, real ESLint runs over fixtures on ESLint 9 and 10, the Convex rule tests, the packed-tarball contents check, a type check of the test files and a docs check of this README, which lints a sample project with every JavaScript example. Before every publish, `pnpm test:package` installs the packed tarball in a clean project and lints and type-checks every entry point on ESLint 9 and 10. Nothing to set up in your project.
 
 ## Security
 
@@ -420,7 +420,7 @@ See [CONTRIBUTING.md](https://github.com/vllnt/eslint-config/blob/main/CONTRIBUT
 
 - Docs and changelog: [oss.vllnt.com/packages/eslint-config](https://oss.vllnt.com/packages/eslint-config) · [release feed](https://oss.vllnt.com/packages/eslint-config/rss.xml)
 - All @vllnt packages: [oss.vllnt.com](https://oss.vllnt.com) · [search packages and docs on index.vllnt.com](https://index.vllnt.com)
-- Source and issues: [GitHub](https://github.com/vllnt/eslint-config) · [issues](https://github.com/vllnt/eslint-config/issues)
+- Source and issues: [GitHub](https://github.com/vllnt/eslint-config) · [issues](https://github.com/vllnt/eslint-config/issues) · [npm](https://www.npmjs.com/package/@vllnt/eslint-config)
 - Questions and updates: [Discord](https://bntvllnt.com/discord) · [X @bntvllnt](https://x.com/bntvllnt)
 - Company and author: [vllnt.com](https://vllnt.com) · [bntvllnt.com](https://bntvllnt.com) · [GitHub @bntvllnt](https://github.com/bntvllnt) · [LinkedIn](https://linkedin.com/in/bntvllnt)
 - Sponsor: [GitHub Sponsors](https://github.com/sponsors/bntvllnt)

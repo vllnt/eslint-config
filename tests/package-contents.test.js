@@ -1,3 +1,4 @@
+// @ts-check
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -13,13 +14,14 @@ const REQUIRED = ["package.json", "README.md", "LICENSE", "CHANGELOG.md", "llms.
 // Contributor and repository files that must stay out of the tarball.
 const FORBIDDEN = [/^AGENTS\.md$/, /^CLAUDE\.md$/, /^\.claude\//, /^tests\//, /^scripts\//, /^\.github\//, /^CONTRIBUTING\.md$/];
 
+/** @returns {string[]} */
 function packedFiles() {
   const out = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], {
     cwd: ROOT,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   });
-  return JSON.parse(out)[0].files.map(({ path }) => path);
+  return JSON.parse(out)[0].files.map((/** @type {{ path: string }} */ { path }) => path);
 }
 
 describe("package contents: npm tarball", () => {

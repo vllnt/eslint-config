@@ -1,3 +1,4 @@
+// @ts-check
 import { before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { dirname, join, relative } from "node:path";
@@ -21,6 +22,9 @@ const RESTRICTED = "no-restricted-syntax";
 const LOOPS = "functional/no-loop-statements";
 const MAX_LINES = "max-lines-per-function";
 
+/** @typedef {Map<string, import("eslint").Linter.LintMessage[]>} Results */
+
+/** @param {...string} names */
 async function compose(...names) {
   const parts = [];
   for (const name of names) {
@@ -29,6 +33,7 @@ async function compose(...names) {
   return parts;
 }
 
+/** @param {string[]} names @param {string[]} patterns */
 async function lintFixtures(names, patterns) {
   const eslint = new ESLint({
     cwd: LINT_DIR,
@@ -41,14 +46,17 @@ async function lintFixtures(names, patterns) {
   );
 }
 
+/** @param {import("eslint").Linter.LintMessage} message */
 const describeMessage = ({ message, ruleId }) => `${ruleId}: ${message}`;
 
+/** @param {Results} results @param {string} file */
 function messagesFor(results, file) {
   const messages = results.get(file);
   assert.ok(messages, `${file} was not linted`);
   return messages;
 }
 
+/** @param {Results} results @param {string} file */
 function assertClean(results, file) {
   assert.deepEqual(
     messagesFor(results, file).map(describeMessage),
@@ -57,6 +65,7 @@ function assertClean(results, file) {
   );
 }
 
+/** @param {Results} results @param {string} file @param {string[]} expected */
 function assertRules(results, file, expected) {
   const messages = messagesFor(results, file);
   assert.deepEqual(
@@ -104,6 +113,7 @@ describe(`ESLint ${ESLint.version}: plugins written for older ESLint APIs run`, 
 });
 
 describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
+  /** @type {Results} */
   let results;
   before(async () => {
     results = await lintFixtures(
@@ -170,8 +180,9 @@ describe("nextjs: route handlers accept Next.js conventions narrowly", () => {
 });
 
 describe("nextjs: the method-name exemption covers the right route files", () => {
-  const exempted = (rule) =>
+  const exempted = (/** @type {any[]} */ rule) =>
     rule.some((option) => option?.filter?.regex?.includes("GET"));
+  /** @type {(file: string) => Promise<any>} */
   let ruleFor;
   before(async () => {
     const eslint = new ESLint({
@@ -234,8 +245,11 @@ describe("playwright: relaxes only what Playwright idioms need", () => {
     "fail/tests/**/*.ts",
     "fail/app/helpers/*.ts",
   ];
+  /** @type {Results} */
   let withNextjs;
+  /** @type {Results} */
   let withBase;
+  /** @type {Results} */
   let control;
   before(async () => {
     withNextjs = await lintFixtures(["nextjs", "playwright"], PATTERNS);
@@ -290,6 +304,7 @@ describe("playwright: relaxes only what Playwright idioms need", () => {
 });
 
 describe("ignores: build output is ignored, same-named source folders are not", () => {
+  /** @param {string[]} names @param {string[]} paths */
   async function ignoredPaths(names, paths) {
     const eslint = new ESLint({
       cwd: LINT_DIR,

@@ -31,14 +31,23 @@ tests/
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
   package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
   docs.test.js ← README sections and order, examples, API and errors tables, footer, llms.txt, metadata and TSDoc
+scripts/
+  test-package.sh ← installs the packed tarball in a clean consumer on ESLint 9 and 10 (`pnpm test:package`)
+  test-package-consumer.mjs ← per-export lint and type checks that test-package.sh runs inside the consumer
+  check-package-contents.sh ← tarball allowlist and denylist check run before publish
+  test-check-package-contents.sh ← tests for check-package-contents.sh (`pnpm test:scripts`)
+tsconfig.json ← `pnpm typecheck` config for tests/*.js and scripts/*.mjs (not shipped)
 ```
 
 ## Commands
 
 | Command | What |
 |---------|------|
-| `pnpm test` | Smoke, lint behavior, Convex rule, package contents and docs tests on ESLint 9, then `pnpm test:eslint10` |
+| `pnpm test` | `pnpm typecheck`, then smoke, lint behavior, Convex rule, package contents and docs tests on ESLint 9, then `pnpm test:eslint10` and `pnpm test:scripts` |
+| `pnpm typecheck` | Strict type check of `tests/*.js` and `scripts/*.mjs` with `tsc` (TypeScript 7) |
 | `pnpm test:eslint10` | Smoke, lint behavior and Convex rule tests on ESLint 10 (POSIX shell) |
+| `pnpm test:scripts` | Tests for the tarball content check (`scripts/test-check-package-contents.sh`) |
+| `pnpm test:package` | Packed tarball in a clean consumer: every `exports` entry loads, lints a clean and a failing sample, and type-checks, on ESLint 9 and 10; the publish workflow runs it before every publish |
 | `pnpm pack --dry-run` | Preview tarball contents |
 
 ## Architecture
@@ -48,6 +57,7 @@ tests/
 - `flat/index.js` is the barrel that re-exports all presets
 - Custom Convex rules live in `flat/convex-rules/` and are bundled via `flat/convex-plugin.js`
 - Tests use `node:test` (no external test runner)
+- Every `tests/*.js` and `scripts/*.mjs` file starts with `// @ts-check`; `tsconfig.json` keeps `checkJs` off so the shipped `flat/` sources the tests import are not type-checked
 - README.md keeps the section order, footer and tables that `tests/docs.test.js` checks; a new export or a new reported message needs a row in the README API or Errors and fixes table
 - A rule override or relaxation needs a fixture that lints clean and a near-miss that still fails, under `tests/fixtures/lint`, checked in `tests/lint-behavior.test.js`
 

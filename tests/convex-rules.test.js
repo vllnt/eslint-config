@@ -1,12 +1,13 @@
+// @ts-check
 import { RuleTester } from "./eslint.js";
 
 import plugin from "../flat/convex-plugin.js";
 
 const tester = new RuleTester();
 const rules = plugin.rules;
-const at = (file) => `/app/convex/${file}`;
+const at = (/** @type {string} */ file) => `/app/convex/${file}`;
 
-const query = (body) => `export const a = query({ ${body} });`;
+const query = (/** @type {string} */ body) => `export const a = query({ ${body} });`;
 
 tester.run("standard-filenames", rules["standard-filenames"], {
   valid: [

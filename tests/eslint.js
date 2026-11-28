@@ -1,3 +1,4 @@
+// @ts-check
 // The ESLint under test: the `eslint` devDependency (9) by default, or the
 // `eslint10` alias when LINT_ESLINT=eslint10, so the suite proves both majors.
 // Plugins that import `eslint` themselves (for example typescript-eslint's
@@ -5,5 +6,7 @@
 // tarball next to `eslint@10` is the check for ESLint 10's own copies.
 const name = process.env.LINT_ESLINT ?? "eslint";
 
-export const { ESLint, RuleTester } = await import(name);
-export const { builtinRules } = await import(`${name}/use-at-your-own-risk`);
+export const { ESLint, RuleTester } = /** @type {typeof import("eslint")} */ (await import(name));
+export const { builtinRules } = /** @type {typeof import("eslint/use-at-your-own-risk")} */ (
+  await import(`${name}/use-at-your-own-risk`)
+);
