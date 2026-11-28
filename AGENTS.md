@@ -57,7 +57,7 @@ tsconfig.json ← `pnpm typecheck` config for tests/*.js and scripts/*.mjs (not 
 - `flat/index.js` is the barrel that re-exports all presets
 - Custom Convex rules live in `flat/convex-rules/` and are bundled via `flat/convex-plugin.js`
 - Tests use `node:test` (no external test runner)
-- Every `tests/*.js` and `scripts/*.mjs` file starts with `// @ts-check`; `tsconfig.json` keeps `checkJs` off so the shipped `flat/` sources the tests import are not type-checked
+- Every `tests/*.js` and `scripts/*.mjs` file starts with `// @ts-check`; `tsconfig.json` keeps `checkJs` off so the shipped `flat/` sources the tests import are not type-checked; a smoke test fails on any file in its `include` list without that first line
 - README.md keeps the section order, footer and tables that `tests/docs.test.js` checks; a new export or a new reported message needs a row in the README API or Errors and fixes table
 - A rule override or relaxation needs a fixture that lints clean and a near-miss that still fails, under `tests/fixtures/lint`, checked in `tests/lint-behavior.test.js`
 

@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Canaries always sort above the current stable: the publish workflow bumps the canary base when `package.json` still matches `dist-tags.latest` or that version is already on npm.
 - Every publish first runs `pnpm test:package`: it installs the packed tarball with pnpm into a clean project and, on ESLint 9 and on ESLint 10, loads each `exports` entry composed as the README shows, lints a clean sample (no errors) and a failing one, and type-checks a strict TypeScript consumer that imports every entry point.
 - The package content check now also blocks `.spec.mts` and `.spec.cts` files from the tarball, and `pnpm test` runs its test harness.
-- `pnpm test` type-checks the test files and scripts with strict TypeScript (`pnpm typecheck`).
+- `pnpm test` type-checks the test files and scripts with strict TypeScript (`pnpm typecheck`), and a smoke test fails when one of them lacks the `// @ts-check` line that opts it in.
 - README: the Links section adds the npm package page, and the `eslint-plugin-turbo` link points at turborepo.dev.
 
 ### Known gaps

@@ -271,3 +271,32 @@ describe("types: every preset type-checks for TypeScript consumers", () => {
     execFileSync(tsc, ["-p", project], { encoding: "utf8", stdio: "pipe" });
   });
 });
+
+describe("types: type check covers every test file and script", () => {
+  // tsconfig.json keeps checkJs off, so a file in its include list is only
+  // type-checked when it opts in with `// @ts-check` on its first line.
+  const root = join(__dirname, "..");
+  const source = readFileSync(join(root, "tsconfig.json"), "utf8");
+  /** @type {{ include: string[] }} */
+  const tsconfig = JSON.parse(source.replaceAll(/^\s*\/\/.*$/gm, ""));
+
+  it("every file matched by tsconfig.json include starts with // @ts-check", () => {
+    const files = tsconfig.include.flatMap((pattern) => {
+      const match = /^([\w./-]+)\/\*(\.\w+)$/.exec(pattern);
+      assert.ok(match, `tsconfig.json include "${pattern}": this test only reads "dir/*.ext" patterns`);
+      const [, dir, extension] = match;
+      return readdirSync(join(root, dir))
+        .filter((name) => name.endsWith(extension))
+        .map((name) => `${dir}/${name}`);
+    });
+    assert.ok(files.length > 0, "tsconfig.json include matches no files");
+    const unchecked = files.filter(
+      (file) => readFileSync(join(root, file), "utf8").split("\n")[0] !== "// @ts-check",
+    );
+    assert.deepEqual(
+      unchecked,
+      [],
+      `not type-checked: ${unchecked.join(", ")}; add \`// @ts-check\` as the first line`,
+    );
+  });
+});
