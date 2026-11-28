@@ -41,7 +41,8 @@ TARBALL="$(find "$WORK" -maxdepth 1 -name '*.tgz' -print -quit)"
 # One consumer at a time: install, check, delete.
 consumer_check() {
   local label="$1" eslint="$2" consumer="$WORK/consumer"
-  mkdir -p "$consumer"
+  rm -rf "$consumer"
+  mkdir "$consumer"
   printf '{ "name": "consumer", "private": true, "type": "module" }\n' > "$consumer/package.json"
   # The TypeScript specs are the ones the README Install section uses.
   if ! (cd "$consumer" && pnpm add -D --config.minimum-release-age="$RELEASE_AGE" \
@@ -49,6 +50,7 @@ consumer_check() {
     "typescript@$TYPESCRIPT" "@typescript/native@$NATIVE") > "$WORK/install.log" 2>&1; then
     echo "FAIL  $label: pnpm add of the packed tarball failed"
     tail -n 30 "$WORK/install.log"
+    rm -rf "$consumer"
     return 1
   fi
   cp "$ROOT/scripts/test-package-consumer.mjs" "$consumer/check.mjs"
