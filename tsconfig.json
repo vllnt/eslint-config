@@ -1,0 +1,17 @@
+// Type-checks the test files and scripts (`pnpm typecheck`); not shipped.
+// checkJs stays off so the shipped flat/ sources that tests import are not
+// checked; each covered file opts in with a `// @ts-check` first line.
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2024",
+    "types": ["node"]
+  },
+  "include": ["tests/*.js", "scripts/*.mjs"]
+}

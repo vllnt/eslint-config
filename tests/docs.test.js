@@ -1,3 +1,4 @@
+// @ts-check
 import { after, before, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -46,13 +47,13 @@ const FOOTER = [
 
 const REPO = `https://github.com/vllnt/${NAME}`;
 
-// The npm package page answers 403 to automated checks, so the shared Links
-// block leaves that one entry out (the brief drops any URL that does not answer 200).
+// The shared Links block. Any external link check must exempt www.npmjs.com: the
+// npm package page answers 403 to every scripted request (a bot check).
 const LINKS = `## Links
 
 - Docs and changelog: [oss.vllnt.com/packages/${NAME}](https://oss.vllnt.com/packages/${NAME}) · [release feed](https://oss.vllnt.com/packages/${NAME}/rss.xml)
 - All @vllnt packages: [oss.vllnt.com](https://oss.vllnt.com) · [search packages and docs on index.vllnt.com](https://index.vllnt.com)
-- Source and issues: [GitHub](${REPO}) · [issues](${REPO}/issues)
+- Source and issues: [GitHub](${REPO}) · [issues](${REPO}/issues) · [npm](https://www.npmjs.com/package/${PKG.name})
 - Questions and updates: [Discord](https://bntvllnt.com/discord) · [X @bntvllnt](https://x.com/bntvllnt)
 - Company and author: [vllnt.com](https://vllnt.com) · [bntvllnt.com](https://bntvllnt.com) · [GitHub @bntvllnt](https://github.com/bntvllnt) · [LinkedIn](https://linkedin.com/in/bntvllnt)
 - Sponsor: [GitHub Sponsors](https://github.com/sponsors/bntvllnt)
@@ -75,6 +76,7 @@ const SAMPLE_TSCONFIG = `${JSON.stringify({ compilerOptions: { noEmit: true, ski
 // Built from parts so this file does not contain the banned domain itself.
 const BANNED_DOMAIN = ["vllnt", "ai"].join(".");
 
+/** @param {string} markdown @param {string} title */
 function section(markdown, title) {
   const start = markdown.indexOf(`\n## ${title}\n`);
   assert.ok(start !== -1, `missing section ${title}`);
@@ -82,6 +84,7 @@ function section(markdown, title) {
   return markdown.slice(start, end === -1 ? undefined : end);
 }
 
+/** @param {string} markdown */
 function codeBlocks(markdown) {
   return [...markdown.matchAll(/^```([^\n]*)\n([\s\S]*?)^```$/gm)].map(
     ([, lang, body]) => ({ lang: lang.trim(), body }),
@@ -89,6 +92,7 @@ function codeBlocks(markdown) {
 }
 
 // GitHub's heading anchors: lower case, punctuation dropped, spaces to hyphens.
+/** @param {string} heading */
 function slug(heading) {
   return heading
     .trim()
@@ -97,6 +101,7 @@ function slug(heading) {
     .replaceAll(" ", "-");
 }
 
+/** @param {string} markdown */
 function anchors(markdown) {
   return new Set(
     [...markdown.matchAll(/^#{1,6} (.+)$/gm)].map(([, text]) => slug(text)),
@@ -109,7 +114,7 @@ function packedFiles() {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   });
-  return JSON.parse(out)[0].files.map(({ path }) => path);
+  return JSON.parse(out)[0].files.map((/** @type {{ path: string }} */ { path }) => path);
 }
 
 describe("docs: package.json metadata", () => {
@@ -160,7 +165,7 @@ describe("docs: README structure", () => {
   it("lists 2 to 4 reasons to use it and 1 to 3 reasons not to", () => {
     const body = section(README, "When to use");
     const [use, avoid] = body.split("Do not use it when:");
-    const bullets = (text) => text.split("\n").filter((line) => line.startsWith("- ")).length;
+    const bullets = (/** @type {string} */ text) => text.split("\n").filter((line) => line.startsWith("- ")).length;
     assert.ok(body.includes("Use it when:"));
     assert.ok(bullets(use) >= 2 && bullets(use) <= 4, `use: ${bullets(use)}`);
     assert.ok(bullets(avoid) >= 1 && bullets(avoid) <= 3, `avoid: ${bullets(avoid)}`);
@@ -267,7 +272,7 @@ describe("docs: API and errors are complete", () => {
     const messages = new Set();
     for (const config of Object.values(presets).flat()) {
       for (const value of Object.values(config.rules ?? {})) {
-        for (const option of Array.isArray(value) ? value : []) {
+        for (const option of /** @type {any[]} */ (Array.isArray(value) ? value : [])) {
           if (option?.message) messages.add(option.message);
         }
       }
@@ -277,7 +282,7 @@ describe("docs: API and errors are complete", () => {
     // with every `{{name}}` placeholder written as `<name>`.
     const rows = errors.split("\n");
     for (const [rule, { meta }] of Object.entries(convexRules.rules)) {
-      for (const [messageId, text] of Object.entries(meta.messages)) {
+      for (const [messageId, text] of Object.entries(meta?.messages ?? {})) {
         const row = rows.find((line) => line.includes(`\`${messageId}\` (\`convex-rules/${rule}\`)`));
         const printed = text.replaceAll(/\{\{\s*(\w+)\s*\}\}/g, "<$1>");
         if (!row?.includes(printed)) missing.push(`${rule}: ${messageId}: ${printed}`);

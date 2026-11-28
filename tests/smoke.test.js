@@ -1,3 +1,4 @@
+// @ts-check
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -50,6 +51,7 @@ describe("exports: default exports match named exports", () => {
 
 describe("exports: barrel re-exports all presets", () => {
   it(`index.js has all ${PRESETS.length} exports`, async () => {
+    /** @type {Record<string, unknown>} */
     const mod = await import("../flat/index.js");
     for (const { name } of PRESETS) {
       assert.ok(mod[name], `missing "${name}" from barrel`);
@@ -174,6 +176,7 @@ describe("hygiene: no leaked internal references", () => {
 });
 
 describe("package.json: required fields", () => {
+  /** @type {any} */
   let pkg;
 
   it("loads package.json", () => {
@@ -220,6 +223,7 @@ describe("package.json: required fields", () => {
   });
 });
 
+/** @param {string} dir @returns {string[]} */
 function collectFiles(dir) {
   const results = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -240,6 +244,7 @@ describe("rules: every configured rule id resolves to a registered rule", () => 
       const registered = overlay
         ? [...(await import("../flat/base.js")).base, ...mod[name]]
         : mod[name];
+      /** @type {Record<string, any>} */
       const plugins = {};
       for (const entry of registered) Object.assign(plugins, entry.plugins);
       const unresolved = [];
@@ -264,5 +269,34 @@ describe("types: every preset type-checks for TypeScript consumers", () => {
     const tsc = join(__dirname, "..", "node_modules", ".bin", "tsc");
     const project = join(__dirname, "fixtures", "types", "tsconfig.json");
     execFileSync(tsc, ["-p", project], { encoding: "utf8", stdio: "pipe" });
+  });
+});
+
+describe("types: type check covers every test file and script", () => {
+  // tsconfig.json keeps checkJs off, so a file in its include list is only
+  // type-checked when it opts in with `// @ts-check` on its first line.
+  const root = join(__dirname, "..");
+  const source = readFileSync(join(root, "tsconfig.json"), "utf8");
+  /** @type {{ include: string[] }} */
+  const tsconfig = JSON.parse(source.replaceAll(/^\s*\/\/.*$/gm, ""));
+
+  it("every file matched by tsconfig.json include starts with // @ts-check", () => {
+    const files = tsconfig.include.flatMap((pattern) => {
+      const match = /^([\w./-]+)\/\*(\.\w+)$/.exec(pattern);
+      assert.ok(match, `tsconfig.json include "${pattern}": this test only reads "dir/*.ext" patterns`);
+      const [, dir, extension] = match;
+      return readdirSync(join(root, dir))
+        .filter((name) => name.endsWith(extension))
+        .map((name) => `${dir}/${name}`);
+    });
+    assert.ok(files.length > 0, "tsconfig.json include matches no files");
+    const unchecked = files.filter(
+      (file) => readFileSync(join(root, file), "utf8").split("\n")[0] !== "// @ts-check",
+    );
+    assert.deepEqual(
+      unchecked,
+      [],
+      `not type-checked: ${unchecked.join(", ")}; add \`// @ts-check\` as the first line`,
+    );
   });
 });

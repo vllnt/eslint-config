@@ -57,9 +57,12 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "pnpm check:agents && node --test tests/*.test.js && pnpm test:eslint10",
+    "test": "pnpm check:agents && pnpm typecheck && node --test tests/*.test.js && pnpm test:eslint10 && pnpm test:scripts",
     "check:agents": "node -e \"const f=require('node:fs');if(!f.existsSync('AGENTS.md')||f.existsSync('CLAUDE.md')||f.existsSync('.claude'))process.exit(1)\"",
-    "test:eslint10": "LINT_ESLINT=eslint10 node --test tests/smoke.test.js tests/lint-behavior.test.js tests/convex-rules.test.js"
+    "test:eslint10": "LINT_ESLINT=eslint10 node --test tests/smoke.test.js tests/lint-behavior.test.js tests/convex-rules.test.js",
+    "test:package": "bash scripts/test-package.sh",
+    "test:scripts": "bash scripts/test-check-package-contents.sh",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@convex-dev/eslint-plugin": "^5.0.1",
@@ -95,6 +98,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "@typescript/native": "npm:typescript@7.0.2",
     "convex": "^1.51.0",
     "eslint": "^9.39.5",

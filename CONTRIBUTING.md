@@ -6,7 +6,8 @@ Thanks for your interest in contributing! This guide covers how to get started.
 
 1. Fork and clone the repo
 2. Install dependencies: `pnpm install`
-3. Run tests: `pnpm test`
+3. Run tests: `pnpm test` (type check, ESLint 9 and 10 runs, docs and script tests)
+4. Before a release change, run `pnpm test:package`: it installs the packed tarball in a clean project, as the publish workflow does
 
 ## Development
 
@@ -34,6 +35,12 @@ tests/
   convex-rules.test.js ← custom Convex rule tests (RuleTester)
   package-contents.test.js ← npm tarball ships the docs (README, llms.txt, CHANGELOG) and no contributor files
   docs.test.js ← README sections and order, examples, API and errors tables, footer, llms.txt, metadata and TSDoc
+scripts/
+  test-package.sh ← installs the packed tarball in a clean consumer on ESLint 9 and 10 (`pnpm test:package`)
+  test-package-consumer.mjs ← per-export lint and type checks that test-package.sh runs inside the consumer
+  check-package-contents.sh ← tarball allowlist and denylist check run before publish
+  test-check-package-contents.sh ← tests for check-package-contents.sh (`pnpm test:scripts`)
+tsconfig.json ← `pnpm typecheck` config for tests/*.js and scripts/*.mjs (not shipped)
 ```
 
 ### Adding a New Preset

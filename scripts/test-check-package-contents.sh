@@ -87,6 +87,15 @@ commit_tree
 run "packed test file is denied" 1
 grep -q 'DENY  src/index.test.ts' <<< "$LAST_OUTPUT" || { echo "FAIL test path not denied" >&2; failures=$((failures + 1)); }
 
+# ES module and CommonJS TypeScript test files are denied too
+for test_file in index.spec.mts index.spec.cts index.test.mts index.test.cts; do
+  rm -f "$REPO/src/"*.test.* "$REPO/src/"*.spec.*
+  printf 'test()\n' > "$REPO/src/$test_file"
+  commit_tree
+  run "packed $test_file is denied" 1
+  grep -q "DENY  src/$test_file" <<< "$LAST_OUTPUT" || { echo "FAIL $test_file not denied" >&2; failures=$((failures + 1)); }
+done
+
 # Denylist hit inside dist
 rm -rf "$REPO/src"
 write_pkg '{"name":"fixture-pack","version":"1.0.0","files":["dist"]}'
