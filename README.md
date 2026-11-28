@@ -402,7 +402,7 @@ Every plugin is a dependency of this package; do not install them separately. ES
 
 ## Testing
 
-This repository runs `pnpm test`: export and shape checks, real ESLint runs over fixtures on ESLint 9 and 10, the Convex rule tests, the packed-tarball contents check, a type check of the test files and a docs check of this README, which lints a sample project with every JavaScript example. Before every publish, `pnpm test:package` installs the packed tarball in a clean project and lints and type-checks every entry point on ESLint 9 and 10. Nothing to set up in your project.
+This repository runs `pnpm test`: export and shape checks, real ESLint runs over fixtures on ESLint 9 and 10, the Convex rule tests, the packed-tarball contents check, a type check of the test files and a docs check of this README, which lints a sample project with every JavaScript example. On every pull request and before every publish, `pnpm test:package` installs the packed tarball in a clean project and lints and type-checks every entry point on ESLint 9 and 10. Nothing to set up in your project.
 
 ## Security
 
