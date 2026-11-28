@@ -2,10 +2,21 @@
   "name": "@vllnt/eslint-config",
   "version": "2.2.0",
   "type": "module",
-  "description": "Strict ESLint config for TypeScript projects. All rules enforce error — no warnings.",
+  "description": "ESLint flat config presets for TypeScript, React, Next.js, Node.js, Convex, Turborepo and Playwright, with type-aware rules and Prettier, all at error.",
   "license": "MIT",
+  "author": {
+    "name": "bntvllnt",
+    "url": "https://bntvllnt.com"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/bntvllnt"
+  },
   "main": "./flat/index.js",
   "homepage": "https://oss.vllnt.com/packages/eslint-config",
+  "bugs": {
+    "url": "https://github.com/vllnt/eslint-config/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vllnt/eslint-config"
@@ -13,11 +24,13 @@
   "keywords": [
     "eslint",
     "eslint-config",
+    "flat-config",
     "typescript",
+    "typescript-eslint",
+    "prettier",
     "react",
     "nextjs",
-    "prettier",
-    "flat-config",
+    "nodejs",
     "convex",
     "playwright",
     "turborepo"

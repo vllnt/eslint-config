@@ -5,6 +5,9 @@ import { namingConvention } from './core/typescript.js'
 // and rules these overrides adjust. Every rule it does not name stays as the
 // language preset sets it, including `write-good-comments` and
 // `unicorn/prevent-abbreviations`.
+/**
+ * Playwright overlay for e2e spec, setup and config files: turns off loop and function-length limits and object-key naming there. Spread it after a language preset.
+ */
 export const playwright = [
   {
     files: [

@@ -6,6 +6,9 @@ import { format } from './core/format.js'
 import { unicornConfig } from './core/unicorn.js'
 import { typescriptConfig } from './core/typescript.js'
 
+/**
+ * Base preset: ESLint recommended, typescript-eslint `strictTypeChecked` and `stylisticTypeChecked` with type-aware linting, Prettier, import sorting, Unicorn, functional rules and comment checks, every rule at `error`.
+ */
 export const base = tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,

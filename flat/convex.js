@@ -5,14 +5,13 @@
  * (structure, naming, query optimization, type safety), and
  * explicit-module-boundary-types for Convex functions.
  *
+ * With base or another language preset, use the config in "Lint a Convex
+ * backend" in the README (it ignores eslint.config.js and adjusts Unicorn
+ * rules for Convex file and parameter names).
+ *
  * @example Standalone
  * import { convex } from '@vllnt/eslint-config/convex'
  * export default [...convex]
- *
- * @example Composed with base (recommended)
- * import { base } from '@vllnt/eslint-config'
- * import { convex } from '@vllnt/eslint-config/convex'
- * export default [...base, ...convex]
  */
 import tseslint from "typescript-eslint";
 import convexPlugin from "@convex-dev/eslint-plugin";
@@ -28,6 +27,9 @@ const CONVEX_EXCLUDED = [
   "**/src/component/testing/**",
 ];
 
+/**
+ * Convex preset: 4 @convex-dev rules and 7 `convex-rules` rules for `convex/` and `src/component/` sources. It adds no base rules: use it alone or after a language preset.
+ */
 export const convex = [
   {
     plugins: {

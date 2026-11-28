@@ -1,5 +1,8 @@
 import turboPlugin from 'eslint-plugin-turbo'
 
+/**
+ * Turborepo addition: eslint-plugin-turbo recommended rules. Spread it after a language preset.
+ */
 export const turbo = [
   {
     plugins: {
